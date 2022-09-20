@@ -33,6 +33,7 @@ class Widget:
                 pos = (event.pos[0] - bb.left, event.pos[1] - bb.top)
                 self.on_right_click(pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            print(event)
             if event.button == pygame.BUTTON_LEFT:
                 self.on_left_button_release()
             elif event.button == pygame.BUTTON_RIGHT:
