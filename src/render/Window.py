@@ -7,10 +7,10 @@ pygame.init()
 class Window:
     instance = None
 
-    def __init__(self):
+    def __init__(self, screen):
         Window.instance = self
         self.screen = pygame.display.set_mode(flags=pygame.RESIZABLE)
-        self.widgets = []
+        self.widget_manager = screen
 
     def tick(self):
         self.process_events()
@@ -18,7 +18,7 @@ class Window:
 
     def render(self):
         self.screen.fill(pygame.Color(0, 0, 0))
-        for widget in self.widgets:
+        for widget in self.widget_manager.get_widgets():
             self._render_widget(widget)
         pygame.display.flip()
 
@@ -31,7 +31,7 @@ class Window:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit(0)
-            for widget in self.widgets:
+            for widget in self.widget_manager.get_widgets():
                 self._process_event_for_widget(event, widget)
 
     def _process_event_for_widget(self, event, widget):
@@ -40,7 +40,7 @@ class Window:
             self._process_event_for_widget(event, child)
 
     def set_screen(self, screen):
-        self.widgets = screen.value
+        self.widget_manager = screen
 
 
 __all__ = [Window]
