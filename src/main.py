@@ -1,11 +1,10 @@
 from time import time
 
 from src.render.Window import Window
-from src.render.Screen import Screen
+from render.screen.TestScreen import TestScreen
 
 
-window = Window()
-window.set_screen(Screen.TEST_SCREEN)
+window = Window(TestScreen())
 curr_time = time()
 while True:
     window.tick()

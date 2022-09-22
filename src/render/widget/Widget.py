@@ -9,7 +9,7 @@ class Widget:
         return self.bb
 
     def get_children(self):
-        return []
+        yield from ()
 
     def draw(self, surface):
         pass

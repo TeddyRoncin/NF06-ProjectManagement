@@ -1,4 +1,8 @@
 venv/
 .git/
 .idea/
-src/render/__pycache__/
+src/render/__pycache__/*
+src/render/widget/__pycache__/
+src/render/screen/__pycache__/
+src/render/animation/__pycache__/
+src/utils/__pycache__/

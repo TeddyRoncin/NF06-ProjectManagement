@@ -1,6 +1,6 @@
 import pygame
 
-from src.render.Widget import Widget
+from render.widget.Widget import Widget
 from src.utils.mathutils import clamp
 
 
