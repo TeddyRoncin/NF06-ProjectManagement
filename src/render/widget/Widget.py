@@ -14,12 +14,15 @@ class Widget:
     def draw(self, surface):
         pass
 
-    def get_relative_pos(self, point):
-        bb = self.get_bb()
+    def get_relative_pos(self, point, bb=None):
+        if not bb:
+            bb = self.get_bb()
         return point[0] - bb.left, point[1] - bb.top
 
-    def is_in_relative_bb(self, point):
-        return 0 <= point[0] < self.bb.width and 0 <= point[1] < self.bb.height
+    def is_in_relative_bb(self, point, bb=None):
+        if not bb:
+            bb = self.get_bb()
+        return 0 <= point[0] < bb.width and 0 <= point[1] < bb.height
 
     def process_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -32,8 +35,7 @@ class Widget:
                 bb = self.get_bb()
                 pos = (event.pos[0] - bb.left, event.pos[1] - bb.top)
                 self.on_right_click(pos)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            print(event)
+        elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == pygame.BUTTON_LEFT:
                 self.on_left_button_release()
             elif event.button == pygame.BUTTON_RIGHT:
@@ -42,7 +44,7 @@ class Widget:
             if event.y == 1:
                 self.on_scroll_up()
             else:
-                self.on_scoll_down()
+                self.on_scroll_down()
         elif event.type == pygame.MOUSEMOTION:
             pos = self.get_relative_pos(event.pos)
             self.on_mouse_motion(pos, event.rel, event.buttons)
@@ -63,13 +65,13 @@ class Widget:
     def on_right_button_release(self):
         pass
 
-    def on_right_click(self, pos):
+    def on_right_click(self):
         pass
 
     def on_scroll_up(self):
         pass
 
-    def on_scoll_down(self):
+    def on_scroll_down(self):
         pass
 
     def on_mouse_motion(self, pos, motion, buttons):

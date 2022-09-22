@@ -2,11 +2,12 @@ import string
 
 import pygame
 
-from render.animation.Animation import Animation
-from render.animation.AppearEffect import AppearEffect
-from render.widget.Widget import Widget
-from src.render.ScrollBarWidget import ScrollBarWidget
-from utils import timing_functions
+from src.render.animation.Animation import Animation
+from src.render.animation.AppearEffect import AppearEffect
+from src.render.widget.Widget import Widget
+from src.render.widget.ScrollBarWidget import ScrollBarWidget
+from src.utils import timing_functions
+from src.utils.pygame_utils import get_font_height
 
 
 class EntryWidget(Widget):
@@ -14,7 +15,7 @@ class EntryWidget(Widget):
     def __init__(self, pos, min_size, max_size, max_chars, multiple_lines):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 16)
-        self.font_height = self.font.size(string.printable)[1] + 4
+        self.font_height = get_font_height(self.font) + 4
         self.min_size = (min_size[0], max(min_size[1], self.font_height))
         self.bb = pygame.Rect(pos, min_size)
         self.max_size = max_size
@@ -22,10 +23,13 @@ class EntryWidget(Widget):
         self.multiple_lines = multiple_lines
         self.focus = False
         self.content = [""]
-        self.horizontal_scroll_bar = ScrollBarWidget(
-            pygame.Rect(self.bb.x, self.bb.y + self.bb.height - 5, self.bb.width, 5), False)
-        self.vertical_scroll_bar = ScrollBarWidget(
-            pygame.Rect(self.bb.x + self.bb.width - 5, self.bb.y, 5, self.bb.height), True)
+        self.total_size = self.min_size
+        self.horizontal_scroll_bar = ScrollBarWidget(self.get_bb, lambda: self.total_size[0], is_vertical=False)
+        self.vertical_scroll_bar = ScrollBarWidget(self.get_bb, lambda: self.total_size[1], is_vertical=True)
+        #self.horizontal_scroll_bar = ScrollBarWidget(
+        #    pygame.Rect(self.bb.x, self.bb.y + self.bb.height - 5, self.bb.width, 5), 1, False)
+        #self.vertical_scroll_bar = ScrollBarWidget(
+        #    pygame.Rect(self.bb.x + self.bb.width - 5, self.bb.y, 5, self.bb.height), 1, True)
         self.cursor_position = [0, 0]
         self.cursor_surface = pygame.Surface((2, self.font.get_height()))
         self.cursor_animation = self._generate_cursor_animation()
@@ -48,28 +52,26 @@ class EntryWidget(Widget):
             # The first element is the surface and the second is the y coordinate the text should be drawn to
             text_surfaces.append(text_surface)
             width = max(width, text_surface.get_width() + 4)
-        requested_size = (max(self.min_size[0], width), max(self.min_size[1], len(text_surfaces) * self.font_height))
-        self.bb.width = min(self.max_size[0], requested_size[0])
-        self.bb.height = min(self.max_size[1], requested_size[1])
-        self.horizontal_scroll_bar.bb = pygame.Rect(self.bb.x, self.bb.y + self.bb.height - 5, self.bb.width, 5)
-        self.vertical_scroll_bar.bb = pygame.Rect(self.bb.x + self.bb.width - 5, self.bb.y, 5, self.bb.height)
-        self.horizontal_scroll_bar.ratio = self.bb.width / requested_size[0]
-        self.vertical_scroll_bar.ratio = self.bb.height / requested_size[1]
+        self.total_size = (max(self.min_size[0], width), max(self.min_size[1], len(text_surfaces) * self.font_height))
+        self.bb.width = min(self.max_size[0], self.total_size[0])
+        self.bb.height = min(self.max_size[1], self.total_size[1])
+        self.horizontal_scroll_bar.refresh_values()
+        self.vertical_scroll_bar.refresh_values()
         background_color = pygame.Color(150, 150, 150)
         if self.focus:
             background_color = pygame.Color(200, 200, 200)
         surface.fill(background_color)
         for i, text_surface in enumerate(text_surfaces):
             surface.blit(text_surface, (
-                2 - (requested_size[0] - self.bb.width) * self.horizontal_scroll_bar.scroll,
-                i * self.font_height + 2 - (requested_size[1] - self.bb.height) * self.vertical_scroll_bar.scroll))
+                2 - (self.total_size[0] - self.bb.width) * self.horizontal_scroll_bar.scroll,
+                i * self.font_height + 2 - (self.total_size[1] - self.bb.height) * self.vertical_scroll_bar.scroll))
         self.cursor_animation.render(self.cursor_surface)
         # Raw x and y positions of the cursor
         x = self.font.size(self.content[self.cursor_position[0]][:self.cursor_position[1]])[0] + 1
         y = self.cursor_position[0] * self.font_height + 2
         # Apply scrolling
-        x -= (requested_size[0] - self.bb.width) * self.horizontal_scroll_bar.scroll
-        y -= (requested_size[1] - self.bb.height) * self.vertical_scroll_bar.scroll
+        x -= (self.total_size[0] - self.bb.width) * self.horizontal_scroll_bar.scroll
+        y -= (self.total_size[1] - self.bb.height) * self.vertical_scroll_bar.scroll
         surface.blit(self.cursor_surface, (x, y))
 
     def on_left_click(self, pos):
@@ -112,6 +114,7 @@ class EntryWidget(Widget):
                 elif self.cursor_position[0] != len(self.content) - 1:
                     self.cursor_position[0] += 1
                     self.cursor_position[1] = 0
+            #elif event.key == pygame.
             elif len(self.content) < self.max_chars:
                 self.content[self.cursor_position[0]] = self.content[self.cursor_position[0]][:self.cursor_position[1]] + event.unicode + self.content[self.cursor_position[0]][self.cursor_position[1]:]
                 self.cursor_position[1] += 1
