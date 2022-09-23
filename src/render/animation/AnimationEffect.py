@@ -1,6 +1,9 @@
 class AnimationEffect:
 
     """
+    This class is a base class, which means it should not be directly instanced.
+    It contains general utility features and a default definition of the methods.
+
     This represents an effect in an Animation.
     An AnimationEffect can be used to create a specific effect to a Surface.
     It can, for example, change its transparency over time, make it translate, ...

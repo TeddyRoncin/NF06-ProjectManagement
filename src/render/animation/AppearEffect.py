@@ -5,6 +5,7 @@ class AppearEffect(AnimationEffect):
 
     """
     An AnimationEffect that changes the opacity of a surface over time.
+
     These are the fields of an AppearEffect :
     - from_alpha : the minimum alpha value, displayed when field timing_function
                    (see AnimationEffect.timing_function) returns 0

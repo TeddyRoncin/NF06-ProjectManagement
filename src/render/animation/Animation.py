@@ -5,6 +5,7 @@ class Animation:
 
     """
     This class represents an animation. An animation is a manager of AnimationEffects.
+
     These are the fields of an Animation :
     - animation_effects : A list containing all the AnimationEffects needed to produce the animation
     - duration : The duration, in seconds, of a complete cycle of the animation.
