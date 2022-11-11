@@ -2,12 +2,12 @@ import string
 
 import pygame
 
-from src.render.animation.Animation import Animation
-from src.render.animation.AppearEffect import AppearEffect
-from src.render.widget.Widget import Widget
-from src.render.widget.ScrollBarWidget import ScrollBarWidget
-from src.utils import timing_functions
-from src.utils.pygame_utils import get_font_height
+from render.animation.Animation import Animation
+from render.animation.AppearEffect import AppearEffect
+from render.widget.Widget import Widget
+from render.widget.ScrollBarWidget import ScrollBarWidget
+from utils import timing_functions
+from utils.pygame_utils import get_font_height
 
 
 class EntryWidget(Widget):
@@ -55,8 +55,6 @@ class EntryWidget(Widget):
         self.total_size = (max(self.min_size[0], width), max(self.min_size[1], len(text_surfaces) * self.font_height))
         self.bb.width = min(self.max_size[0], self.total_size[0])
         self.bb.height = min(self.max_size[1], self.total_size[1])
-        self.horizontal_scroll_bar.refresh_values()
-        self.vertical_scroll_bar.refresh_values()
         background_color = pygame.Color(150, 150, 150)
         if self.focus:
             background_color = pygame.Color(200, 200, 200)

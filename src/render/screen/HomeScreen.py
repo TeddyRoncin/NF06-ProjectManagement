@@ -1,7 +1,9 @@
 import pygame
 
-from src.render.screen.Screen import Screen
-from src.render.widget.ListWidget import ListWidget
+from render.Window import Window
+from render.screen.ProjectScreen import ProjectScreen
+from render.screen.Screen import Screen
+from render.widget.ListWidget import ListWidget
 
 
 class HomeScreen(Screen):
@@ -14,11 +16,16 @@ class HomeScreen(Screen):
     - project_list : The ListWidget of all the projects that were loaded
     """
 
-    def __init__(self):
+    def __init__(self, projects=None):
         """
         Creates a new HomeScreen
         """
-        self.project_list = ListWidget(pygame.Rect(100, 100, 300, 50), ["Hello", "World", "Hope", "You're", "Fine"])
+        if projects is None:
+            projects = []
+        self.projects = projects
+        self.project_list = ListWidget(pygame.Rect(100, 100, 300, 50),
+                                       [project.name for project in self.projects],
+                                       on_item_clicked=self.on_select_project)
 
     def get_widgets(self):
         """
@@ -27,3 +34,21 @@ class HomeScreen(Screen):
                  There, the only element in the generator is the widget project_list
         """
         yield self.project_list
+
+    def set_projects(self, projects):
+        """
+        Modifies the list of projects
+        :param projects: The new list of projects
+        :return: None
+        """
+        self.projects = projects
+        self.project_list.set_items(projects)
+
+    def on_select_project(self, project_name):
+        """
+        Callback from self.project_list. It is called when the user clicks on a project
+        :param project_name: The name of the project that was clicked
+        :return: None
+        """
+        Window.instance.set_screen(ProjectScreen(
+            [project for project in self.projects if project.name == project_name][0]))

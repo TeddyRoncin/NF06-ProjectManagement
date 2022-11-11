@@ -1,4 +1,4 @@
-from src.render.animation.AnimationEffect import AnimationEffect
+from render.animation.AnimationEffect import AnimationEffect
 
 
 class AppearEffect(AnimationEffect):

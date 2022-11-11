@@ -1,6 +1,6 @@
-from src.render.screen.Screen import Screen
-from src.render.widget.EntryWidget import EntryWidget
-from src.render.widget.TestWidget import TestWidget
+from render.screen.Screen import Screen
+from render.widget.EntryWidget import EntryWidget
+from render.widget.TestWidget import TestWidget
 
 
 class TestScreen(Screen):

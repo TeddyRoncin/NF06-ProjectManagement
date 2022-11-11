@@ -1,18 +1,22 @@
 import pygame
 
+from utils.decorators import singleton
 
 pygame.init()
 
+print("importing")
 
+
+@singleton
 class Window:
-    instance = None
 
-    def __init__(self, screen):
-        Window.instance = self
+    def __init__(self):
         self.screen = pygame.display.set_mode(flags=pygame.RESIZABLE)
-        self.widget_manager = screen
+        self.widget_manager = None
 
     def tick(self):
+        if self.widget_manager is None:
+            return
         self.process_events()
         self.render()
 
@@ -23,7 +27,8 @@ class Window:
         pygame.display.flip()
 
     def _render_widget(self, widget):
-        widget.draw(self.screen.subsurface(widget.get_bb()))
+        #pygame.Rect().clamp_ip()
+        widget.draw(self.screen.subsurface(widget.get_bb().clamp(self.screen.get_rect())))
         for child in widget.get_children():
             self._render_widget(child)
 

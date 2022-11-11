@@ -1,16 +1,17 @@
 import pygame
 
-from src.render.widget.Widget import Widget
-from src.render.widget.ScrollBarWidget import ScrollBarWidget
-from src.utils.pygame_utils import get_font_height
+from render.widget.Widget import Widget
+from render.widget.ScrollBarWidget import ScrollBarWidget
+from utils.pygame_utils import get_font_height
 
 
 class ListWidget(Widget):
 
-    def __init__(self, bb, items):
+    def __init__(self, bb, items, on_item_clicked=lambda x: None):
         super().__init__()
         self.bb = bb
         self.items = items
+        self.on_item_clicked = on_item_clicked
         self.font = pygame.font.SysFont("Arial", 16)
         self.item_height = get_font_height(self.font)
         self.total_height = len(self.items) * self.item_height
@@ -27,6 +28,11 @@ class ListWidget(Widget):
 
     def on_left_click_bb(self, pos):
         item_clicked = int((pos[1] + self.get_scroll_in_pixel()) / self.item_height)
+        self.on_item_clicked(self.items[item_clicked])
 
     def get_scroll_in_pixel(self):
         return self.scrollbar.get_scroll_in_pixel()
+
+    def set_items(self, items):
+        self.items = items
+        self.total_height = len(self.items) * self.item_height
