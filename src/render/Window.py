@@ -25,10 +25,7 @@ class Window:
         pygame.display.flip()
 
     def _render_widget(self, widget):
-        bb = widget.get_bb()
-        if bb is None:
-            return
-        widget.draw(self.screen.subsurface(bb.clamp(self.screen.get_rect())))
+        widget.draw(self.screen.subsurface(widget.get_bb().clamp(self.screen.get_rect())))
         for child in widget.get_children():
             self._render_widget(child)
 
