@@ -17,18 +17,16 @@ class Project:
         non_loadable_projects = []
         for project_file_name in os.listdir("data/projects"):
             try:
+                print(f"Loading {project_file_name}")
                 with open("data/projects/" + project_file_name, "r") as file:
                     project_data = json.load(file)
-                    print(project_data)
-                    tasks = [Task() for _ in range(len(project_data["tasks"]))]
-                    print(len(tasks))
+                    tasks = [Task(i) for i in range(len(project_data["tasks"]))]
                     for i, task in enumerate(project_data["tasks"]):
                         tasks[i].name = task["name"]
                         tasks[i].description = task["description"]
                         for upstream_task in task["upstream"]:
-                            print(f"adding link between {tasks[i]} and {upstream_task}")
+                            print(f"Linking {tasks[i].id} and {upstream_task}")
                             tasks[i].add_upstream_task(tasks[upstream_task])
-                            print("done !")
                     # The first task of the list is the beginning task, and the second one is the project task
                     projects.append(Project(project_data["name"], project_data["description"], tasks[0], tasks[1]))
             #except Exception as e:
@@ -44,5 +42,5 @@ class Project:
     def __init__(self, name, description="", beginning_task=None, project_task=None):
         self.name = name
         self.description = description
-        self.project_task = Task(name) if project_task is None else project_task
-        self.beginning_task = Task(name) if beginning_task is None else beginning_task
+        self.project_task = Task(1, name) if project_task is None else project_task
+        self.beginning_task = Task(0, name) if beginning_task is None else beginning_task

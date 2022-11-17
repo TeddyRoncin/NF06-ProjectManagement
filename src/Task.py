@@ -5,11 +5,12 @@ from TaskStatus import TaskStatus
 
 class Task:
 
-    def __init__(self, name="", description="", upstream_tasks=None, downstream_tasks=None, estimated_time=0):
+    def __init__(self, id, name="", description="", upstream_tasks=None, downstream_tasks=None, estimated_time=0):
         if downstream_tasks is None:
             downstream_tasks = []
         if upstream_tasks is None:
             upstream_tasks = []
+        self.id = id
         self.name = name
         self.description = description
         self.upstream_tasks = upstream_tasks
@@ -33,18 +34,34 @@ class Task:
     def add_upstream_task(self, task):
         self.upstream_tasks.append(task)
         task.downstream_tasks.append(self)
-        if task.upstream_tasks_count >= self.upstream_tasks_count:
-            self.upstream_tasks_count = task.upstream_tasks_count + 1
-        if len(self.upstream_tasks) == 1:
-            self.max_upstream_tasks_depth = task.max_upstream_tasks_depth
-        else:
-            self.max_upstream_tasks_depth += task.max_upstream_tasks_depth
-        if self.downstream_tasks_count >= task.downstream_tasks_count:
-            task.downstream_tasks_count = self.downstream_tasks_count + 1
-        if len(task.downstream_tasks) == 1:
-            task.max_downstream_tasks_depth = self.max_downstream_tasks_depth
-        else:
-            task.max_downstream_tasks_depth += self.max_downstream_tasks_depth
+        self.update_upstream_info()
+        task.update_downstream_info()
+
+    def update_upstream_info(self):
+        self.upstream_tasks_count = 0
+        self.max_upstream_tasks_depth = 0
+        if len(self.upstream_tasks) == 0:
+            self.max_upstream_tasks_depth = 1
+        for upstream_task in self.upstream_tasks:
+            if upstream_task.upstream_tasks_count >= self.upstream_tasks_count:
+                self.upstream_tasks_count = upstream_task.upstream_tasks_count + 1
+            self.max_upstream_tasks_depth += upstream_task.max_upstream_tasks_depth
+        # Propagate changes to downstream tasks
+        for downstream_task in self.downstream_tasks:
+            downstream_task.update_upstream_info()
+
+    def update_downstream_info(self):
+        self.downstream_tasks_count = 0
+        self.max_downstream_tasks_depth = 0
+        if len(self.downstream_tasks) == 0:
+            self.max_downstream_tasks_depth = 1
+        for downstream_task in self.downstream_tasks:
+            if downstream_task.downstream_tasks_count >= self.downstream_tasks_count:
+                self.downstream_tasks_count = downstream_task.downstream_tasks_count + 1
+            self.max_downstream_tasks_depth += downstream_task.max_downstream_tasks_depth
+        # Propagate changes to upstream tasks
+        for upstream_task in self.upstream_tasks:
+            upstream_task.update_downstream_info()
 
     def __str__(self):
         return f"<Task name={self.name}>"

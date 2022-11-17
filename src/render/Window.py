@@ -4,8 +4,6 @@ from utils.decorators import singleton
 
 pygame.init()
 
-print("importing")
-
 
 @singleton
 class Window:
@@ -27,8 +25,10 @@ class Window:
         pygame.display.flip()
 
     def _render_widget(self, widget):
-        #pygame.Rect().clamp_ip()
-        widget.draw(self.screen.subsurface(widget.get_bb().clamp(self.screen.get_rect())))
+        bb = widget.get_bb()
+        if bb is None:
+            return
+        widget.draw(self.screen.subsurface(bb.clamp(self.screen.get_rect())))
         for child in widget.get_children():
             self._render_widget(child)
 
