@@ -17,6 +17,9 @@ class TreeTaskWidget(Widget):
         self.get_parent_bb = get_parent_bb
 
     def draw(self, surface):
+        self._draw(surface, circle_color=pygame.Color(255, 0, 0))
+
+    def _draw(self, surface, circle_color):
         offset = [0, 0]
         parent_bb = self.get_parent_bb()
         if self.actual_bb.x == parent_bb.x:
@@ -27,9 +30,9 @@ class TreeTaskWidget(Widget):
             offset[1] = -40 + self.actual_bb.height
         elif self.actual_bb.y == parent_bb.y + parent_bb.height:
             offset[1] = 40 - self.actual_bb.height
-        pygame.draw.circle(surface, pygame.Color(255, 0, 0), (20 + offset[0], 20 + offset[1]), 20)
+        pygame.draw.circle(surface, circle_color, (20 + offset[0], 20 + offset[1]), 20)
         font = pygame.font.SysFont("Arial", 10)
-        surface.blit(font.render(self.task.name, False, pygame.Color(0, 255, 0)), (10+offset[0], 10+offset[1]))
+        surface.blit(font.render(self.task.name, False, pygame.Color(0, 255, 0)), (10 + offset[0], 10 + offset[1]))
 
     def get_bb(self):
         self.actual_bb = self.base_bb.move(self.get_position_offset())
