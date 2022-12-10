@@ -5,28 +5,26 @@ from TaskStatus import TaskStatus
 
 class Task:
 
-    def __init__(self, id, name="", description="", upstream_tasks=None, downstream_tasks=None, estimated_time=0):
-        if downstream_tasks is None:
-            downstream_tasks = []
-        if upstream_tasks is None:
-            upstream_tasks = []
-        self.id = id
+    next_id = 0
+
+    def __init__(self, id_=None, name="", description="", estimated_time=0):
+        if id_ is None:
+            id_ = Task.next_id
+        Task.next_id = max(Task.next_id, id_ + 1)
+        self.id = id_
         self.name = name
         self.description = description
-        self.upstream_tasks = upstream_tasks
-        self.downstream_tasks = downstream_tasks
+        self.upstream_tasks = []
+        self.downstream_tasks = []
         self.estimated_time = estimated_time
         self.status = TaskStatus.NOT_STARTED
-        for task in upstream_tasks:
-            if task.status != TaskStatus.FINISHED:
-                self.status = TaskStatus.LOCKED
-        # We have to give max at least 2 arguments, so we give it -1 twice, in case there are no downstream_tasks
-        self.downstream_tasks_count = max(-1, -1, *(task.downstream_tasks_count for task in self.downstream_tasks)) + 1
-        # This task counts as a depth level, so max_downstream_tasks_depth should be at least 1
-        self.max_downstream_tasks_depth = max(1, sum((task.max_downstream_tasks_depth for task in self.downstream_tasks)))
-
-        self.upstream_tasks_count = max(-1, -1, *(task.upstream_tasks_count for task in self.upstream_tasks)) + 1
-        self.max_upstream_tasks_depth = max(1, sum((task.max_upstream_tasks_depth for task in self.upstream_tasks)))
+        self.downstream_tasks_count = 0
+        self.upstream_tasks_count = 0
+        # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count) should always be at least 1
+        self.max_downstream_tasks_depth = 1
+        self.max_upstream_tasks_depth = 1
+        self.update_upstream_info()
+        self.update_downstream_info()
 
     def update_status(self):
         self.status += 1
@@ -36,6 +34,21 @@ class Task:
         task.downstream_tasks.append(self)
         self.update_upstream_info()
         task.update_downstream_info()
+
+    def remove_upstream_task(self, task):
+        self.upstream_tasks.remove(task)
+        task.downstream_tasks.remove(self)
+        self.update_upstream_info()
+        task.update_downstream_info()
+
+    def replace_upstream_task(self, oldTask, newTask):
+        index = self.upstream_tasks.index(oldTask)
+        self.upstream_tasks[index] = newTask
+        oldTask.downstream_tasks.remove(self)
+        newTask.downstream_tasks.append(self)
+        self.update_upstream_info()
+        newTask.update_downstream_info()
+        #oldTask.update_downstream_info()
 
     def update_upstream_info(self):
         self.upstream_tasks_count = 0

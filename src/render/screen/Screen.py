@@ -17,6 +17,20 @@ class Screen:
         """
         yield from ()
 
+    def update(self):
+        """
+        Update some values of the widgets if needed. This is called at every frame
+        :return: None
+        """
+        pass
+
+    def reload(self):
+        """
+        Loads or reload the screen. This is most useful when we come back to a screen, but this screen needs to be refreshed
+        :return: None
+        """
+        pass
+
 
 __all__ = [Screen]
 

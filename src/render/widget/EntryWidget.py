@@ -113,9 +113,12 @@ class EntryWidget(Widget):
                     self.cursor_position[0] += 1
                     self.cursor_position[1] = 0
             #elif event.key == pygame.
-            elif len(self.content) < self.max_chars:
+            elif len(self.content) < self.max_chars or self.max_chars == -1:
                 self.content[self.cursor_position[0]] = self.content[self.cursor_position[0]][:self.cursor_position[1]] + event.unicode + self.content[self.cursor_position[0]][self.cursor_position[1]:]
                 self.cursor_position[1] += 1
+
+    def get_content(self):
+        return "\n".join(self.content)
 
 
 __all__ = [EntryWidget]

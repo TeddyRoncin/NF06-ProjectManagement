@@ -1,0 +1,66 @@
+{
+  "name": "blablbaHard Example",
+  "description": "This is an example project, which is pretty big :)",
+  "tasks": [
+    {
+      "name": "First Task",
+      "description": "This is the first task",
+      "status": 1,
+      "upstream": []
+    },
+    {
+      "name": "Objective",
+      "description": "This is the objective",
+      "status": 0,
+      "upstream": [7]
+    },
+    {
+      "name": "Task2",
+      "description": "descripting",
+      "status": 0,
+      "upstream": [0]
+    },
+    {
+      "name": "Task3",
+      "description": "descripting",
+      "status": 0,
+      "upstream": [2]
+    },
+    {
+      "name": "Task4",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [3]
+    },
+    {
+      "name": "Task5",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [3]
+    },
+    {
+      "name": "Task6",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [4, 5]
+    },
+    {
+      "name": "Task7",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [6, 8]
+    },
+    {
+      "name": "Task9",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [9]
+    },
+    {
+      "name": "Task10",
+      "description": "descripting more",
+      "status": 0,
+      "upstream": [2]
+    }
+  ]
+}

@@ -16,6 +16,7 @@ class Window:
         if self.widget_manager is None:
             return
         self.process_events()
+        self.widget_manager.update()
         self.render()
 
     def render(self):
@@ -43,6 +44,7 @@ class Window:
 
     def set_screen(self, screen):
         self.widget_manager = screen
+        self.widget_manager.reload()
 
 
 __all__ = [Window]

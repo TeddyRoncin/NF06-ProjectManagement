@@ -4,7 +4,7 @@ from render.widget.Widget import Widget
 from utils.pygame_utils import crop_bb_to_fit
 
 
-class GanttTaskWidget(Widget):
+class TreeTaskWidget(Widget):
 
     def __init__(self, task, position, get_position_offset, get_parent_bb):
         super().__init__()
