@@ -8,10 +8,12 @@ class Task:
     next_id = 0
 
     def __init__(self, id_=None, name="", description="", estimated_time=0):
+        super().__init__()
         if id_ is None:
             id_ = Task.next_id
         Task.next_id = max(Task.next_id, id_ + 1)
         self.id = id_
+        self.index = 0
         self.name = name
         self.description = description
         self.upstream_tasks = []
@@ -20,6 +22,8 @@ class Task:
         self.status = TaskStatus.NOT_STARTED
         self.downstream_tasks_count = 0
         self.upstream_tasks_count = 0
+        self.earliest_start = 0
+        self.latest_start = 0
         # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count) should always be at least 1
         self.max_downstream_tasks_depth = 1
         self.max_upstream_tasks_depth = 1
@@ -77,7 +81,6 @@ class Task:
             upstream_task.update_downstream_info()
 
     def __str__(self):
-        return f"<Task name={self.name}>"
+        return f"<Task name={self.name} index={self.index}>"
 
-    def __repr__(self):
-        return str(self)
+    __repr__ = __str__
