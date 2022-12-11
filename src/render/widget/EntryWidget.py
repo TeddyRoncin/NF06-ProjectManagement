@@ -1,5 +1,3 @@
-import string
-
 import pygame
 
 from render.animation.Animation import Animation
@@ -7,7 +5,6 @@ from render.animation.AppearEffect import AppearEffect
 from render.widget.Widget import Widget
 from render.widget.ScrollBarWidget import ScrollBarWidget
 from utils import timing_functions
-from utils.pygame_utils import get_font_height
 
 
 class EntryWidget(Widget):
@@ -15,7 +12,7 @@ class EntryWidget(Widget):
     def __init__(self, pos, min_size, max_size, max_chars, multiple_lines):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 16)
-        self.font_height = get_font_height(self.font) + 4
+        self.font_height = self.font.get_height() + 4
         self.min_size = (min_size[0], max(min_size[1], self.font_height))
         self.bb = pygame.Rect(pos, min_size)
         self.max_size = max_size
@@ -26,10 +23,6 @@ class EntryWidget(Widget):
         self.total_size = self.min_size
         self.horizontal_scroll_bar = ScrollBarWidget(self.get_bb, lambda: self.total_size[0], is_vertical=False)
         self.vertical_scroll_bar = ScrollBarWidget(self.get_bb, lambda: self.total_size[1], is_vertical=True)
-        #self.horizontal_scroll_bar = ScrollBarWidget(
-        #    pygame.Rect(self.bb.x, self.bb.y + self.bb.height - 5, self.bb.width, 5), 1, False)
-        #self.vertical_scroll_bar = ScrollBarWidget(
-        #    pygame.Rect(self.bb.x + self.bb.width - 5, self.bb.y, 5, self.bb.height), 1, True)
         self.cursor_position = [0, 0]
         self.cursor_surface = pygame.Surface((2, self.font.get_height()))
         self.cursor_animation = self._generate_cursor_animation()
@@ -85,9 +78,12 @@ class EntryWidget(Widget):
         if self.focus:
             if event.key == pygame.K_BACKSPACE:
                 if self.cursor_position[1] != 0:
-                    self.content[self.cursor_position[0]] = self.content[self.cursor_position[0]][:self.cursor_position[1]-1] + self.content[self.cursor_position[0]][self.cursor_position[1]:]
+                    self.content[self.cursor_position[0]] = \
+                        self.content[self.cursor_position[0]][:self.cursor_position[1]-1] + \
+                        self.content[self.cursor_position[0]][self.cursor_position[1]:]
                     self.cursor_position[1] -= 1
-                elif self.cursor_position[0] > 0:  # If it is the first character of the first line, we don't want to delete anything
+                # If it is the first character of the first line, we don't want to delete anything
+                elif self.cursor_position[0] > 0:
                     line = self.content[self.cursor_position[0]]
                     del self.content[self.cursor_position[0]]
                     self.cursor_position[0] -= 1
@@ -96,7 +92,8 @@ class EntryWidget(Widget):
             elif event.key == pygame.K_RETURN:
                 if self.multiple_lines:
                     end_of_line = self.content[self.cursor_position[0]][self.cursor_position[1]:]
-                    self.content[self.cursor_position[0]] = self.content[self.cursor_position[0]][:self.cursor_position[1]]
+                    self.content[self.cursor_position[0]] = \
+                        self.content[self.cursor_position[0]][:self.cursor_position[1]]
                     self.cursor_position[0] += 1
                     self.cursor_position[1] = 0
                     self.content.insert(self.cursor_position[0], end_of_line)
@@ -112,9 +109,11 @@ class EntryWidget(Widget):
                 elif self.cursor_position[0] != len(self.content) - 1:
                     self.cursor_position[0] += 1
                     self.cursor_position[1] = 0
-            #elif event.key == pygame.
             elif len(self.content) < self.max_chars or self.max_chars == -1:
-                self.content[self.cursor_position[0]] = self.content[self.cursor_position[0]][:self.cursor_position[1]] + event.unicode + self.content[self.cursor_position[0]][self.cursor_position[1]:]
+                self.content[self.cursor_position[0]] = \
+                    self.content[self.cursor_position[0]][:self.cursor_position[1]] + \
+                    event.unicode + \
+                    self.content[self.cursor_position[0]][self.cursor_position[1]:]
                 self.cursor_position[1] += 1
 
     def get_content(self):

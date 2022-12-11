@@ -14,7 +14,9 @@ class ButtonWidget(Widget):
 
     def draw(self, surface):
         surface.fill((255, 255, 255))
-        surface.blit(self.surface, ((self.bb.width - self.surface.get_width()) / 2, (self.bb.height - self.surface.get_height()) / 2))
+        surface.blit(self.surface,
+                     ((self.bb.width - self.surface.get_width()) / 2,
+                      (self.bb.height - self.surface.get_height()) / 2))
 
     def on_left_click_bb(self, pos):
         self.on_click()

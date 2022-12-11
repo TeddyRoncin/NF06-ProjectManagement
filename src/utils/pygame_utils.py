@@ -1,10 +1,3 @@
-import string
-
-
-def get_font_height(font):
-    return font.size(string.printable)[1]
-
-
 def crop_bb_to_fit(bb, bb_to_fit):
     if bb.x < bb_to_fit.x:
         bb.width += bb.x - bb_to_fit.x

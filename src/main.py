@@ -1,5 +1,3 @@
-from time import time
-
 from Project import Project
 from render.screen.HomeScreen import HomeScreen
 from render.Window import Window

@@ -1,7 +1,6 @@
 import pygame.font
 
 from render.widget.Widget import Widget
-from utils import pygame_utils
 
 
 class CheckboxWidget(Widget):
@@ -12,7 +11,7 @@ class CheckboxWidget(Widget):
         self.on_value_changed = on_value_changed
         label = label.split("\n")
         text_renders = [self.font.render(line, False, (0, 0, 0)) for line in label]
-        width = max(text_renders, key=lambda render: render.get_width()).get_width()
+        width = max(text_renders, key=lambda text_render: text_render.get_width()).get_width()
         self.label_surface = pygame.Surface((width, len(label) * (self.font.get_height() + 4) - 4))
         # Make the background transparent
         self.label_surface.fill((255, 255, 255))

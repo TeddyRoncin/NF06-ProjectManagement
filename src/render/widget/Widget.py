@@ -144,7 +144,6 @@ class Widget:
         It is automatically called by the Widget.process_event(event) method.
         If a Widget needs to fetch this event, it should overwrite this method.
         By default, it does nothing
-        :param pos: The position of the click, relative to the bounding box of this Widget
         :return: None
         """
         pass

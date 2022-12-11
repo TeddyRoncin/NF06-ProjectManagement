@@ -8,7 +8,8 @@ class TreeLinkWidget(Widget):
 
     def __init__(self, from_position, to_position, get_position_offset, get_parent_bb):
         super().__init__()
-        self.base_bb = pygame.Rect(from_position, (to_position[0] - from_position[0], to_position[1] - from_position[1]))
+        self.base_bb = pygame.Rect(from_position,
+                                   (to_position[0] - from_position[0], to_position[1] - from_position[1]))
         if from_position[1] <= to_position[1]:
             self.from_position = (0, 0)
             self.to_position = (self.base_bb.width, self.base_bb.height)
@@ -34,7 +35,11 @@ class TreeLinkWidget(Widget):
             offset[1] = -40 + self.actual_bb.height
         elif self.actual_bb.y == parent_bb.y + parent_bb.height:
             offset[1] = 40 - self.actual_bb.height
-        pygame.draw.line(surface, (0, 0, 255), (self.from_position[0] + offset[0], self.from_position[1] + offset[1]), (self.to_position[0] + offset[0], self.to_position[1] + offset[1]), 3)
+        pygame.draw.line(surface,
+                         (0, 0, 255),
+                         (self.from_position[0] + offset[0], self.from_position[1] + offset[1]),
+                         (self.to_position[0] + offset[0], self.to_position[1] + offset[1]),
+                         3)
 
     def get_bb(self):
         self.actual_bb = self.base_bb.move(self.get_position_offset())

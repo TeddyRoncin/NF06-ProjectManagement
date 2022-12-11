@@ -1,4 +1,3 @@
-from render.widget.CheckboxWidget import CheckboxWidget
 from render.widget.tasks_tree.TreeWidget import TreeWidget
 from render.widget.tasks_tree.add_task.AddTaskTreeTaskWidget import AddTaskTreeTaskWidget
 
@@ -39,7 +38,8 @@ class AddTaskTreeWidget(TreeWidget):
             # Verify it's not the last task
             if len(selected_task.downstream_tasks) != 0 and len(selected_task.downstream_tasks[0].upstream_tasks) == 1:
                 # Verify it's not the second to last task
-                if len(selected_task.downstream_tasks[0].downstream_tasks) != 0 and len(selected_task.downstream_tasks[0].downstream_tasks[0].upstream_tasks) == 1:
+                if len(selected_task.downstream_tasks[0].downstream_tasks) != 0 and \
+                        len(selected_task.downstream_tasks[0].downstream_tasks[0].upstream_tasks) == 1:
                     self.new_branch_checkbox.enabled = True
 
     def on_enable_task(self, task):

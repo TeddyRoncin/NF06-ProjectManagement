@@ -1,7 +1,6 @@
 import os
 import sys
 from ctypes import CDLL, POINTER, c_int, Structure, c_char_p, cast, pointer, byref
-from enum import Enum
 
 if os.name == "windows":
     dll = CDLL("Core.dll")
@@ -17,20 +16,21 @@ class Task_Struct(Structure):
     def convert_tasks(first_task, task_count):
         """
         Convert a list of tasks into a list of Task_Struct
-        :param first_task:
-        :return:
+        :param first_task: The first task of the project
+        :param task_count: The number of tasks in the project
+        :return: None
         """
         # Initialize the list of Task_Struct
         Task_Struct._tasks = [None] * task_count
         # Create the first task (which will create all the others in a recursive way)
         Task_Struct(first_task)
         # Load data into the Task_Struct
-        print(Task_Struct._tasks)
         for i, task in enumerate(Task_Struct._tasks):
             # There should not be any, but we still check, just in case
             # If this occurs, code may not continue working properly
             if task is None:
-                print(f"Task with id {id} doesn't seem to exist. This error occured while converting tasks to task structures", file=sys.stderr)
+                print(f"Task with id {id} doesn't seem to exist. "
+                      f"This error occured while converting tasks to task structures", file=sys.stderr)
                 continue
             task.load()
         # Return the first task
@@ -78,7 +78,7 @@ class Task_Struct(Structure):
         self.successors = cast(downstream_tasks_array_type(*downstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
         upstream_tasks_array_type = POINTER(Task_Struct) * len(self._upstream_tasks_id)
         upstream_tasks_pointers = [pointer(Task_Struct._tasks[i]) for i in self._upstream_tasks_id]
-        self. ancestors= cast(upstream_tasks_array_type(*upstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
+        self. ancestors = cast(upstream_tasks_array_type(*upstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
         self.id = c_int(self._task.id)
         self.successors_count = len(self._task.downstream_tasks)
         self.ancestors_count = len(self._task.upstream_tasks)

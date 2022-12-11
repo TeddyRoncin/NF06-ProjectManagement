@@ -6,6 +6,7 @@ from render.widget.CheckboxWidget import CheckboxWidget
 from render.widget.EntryWidget import EntryWidget
 from render.widget.LabelWidget import LabelWidget
 from render.widget.tasks_tree.add_task.AddTaskTreeWidget import AddTaskTreeWidget
+from utils import c_functions
 
 
 class AddTaskScreen(Screen):
@@ -48,7 +49,8 @@ class AddTaskScreen(Screen):
             if len(upstream_task.downstream_tasks) == 1:
                 depth = 1
                 last_downstream_task = upstream_task
-                # We find the end of the branch (it could be the last one, so we check the if it is to avoid running into an error)
+                # We find the end of the branch
+                # (it could be the last one, so we check the if it is to avoid running into an error)
                 while len(downstream_task.downstream_tasks) != 0 and depth != 0:
                     # We are entering an intersection
                     if len(downstream_task.downstream_tasks) > 1:
@@ -93,5 +95,6 @@ class AddTaskScreen(Screen):
                     if upstream_task in upstream_tasks:
                         downstream_task.remove_upstream_task(upstream_task)
                         task.add_upstream_task(upstream_task)
+        c_functions.fix_indices(self.project)
         Window.instance.set_screen(self.last_screen)
 

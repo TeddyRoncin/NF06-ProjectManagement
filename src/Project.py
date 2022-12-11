@@ -1,18 +1,20 @@
-import ctypes
 import os
 
 from Task import Task
 import json
 
+from utils import c_functions
+
 
 class Project:
 
-    """
-    Loads the projects. Each project is a JSON file stored in the data/projects directory
-    :return: A tuple. The first value is the list of projects, and the second value is the list of non-loadable projects
-    """
     @classmethod
     def load_projects(cls):
+        """
+        Loads the projects. Each project is a JSON file stored in the data/projects directory
+        :return: A tuple. The first value is the list of projects,
+                 and the second value is the list of non-loadable projects
+        """
         projects = []
         non_loadable_projects = []
         for project_file_name in os.listdir("data/projects"):
@@ -40,10 +42,13 @@ class Project:
                 print(e)
         return projects, non_loadable_projects
 
-    """
-    Represents a project. A project has a name, a file name, a description. The goal of the project is a task : complete the project.
-    """
     def __init__(self, name, file, description="", tasks_count=2, beginning_task=None, project_task=None):
+        """
+        Represents a project. A project has a name, a file name, a description.
+        A project must have at least 2 tasks :
+            * the beginning_task (represents the beginning of the project)
+            * the project_task (represents the project ending).
+        """
         self.name = name
         self.file = file
         self.description = description
@@ -58,7 +63,9 @@ class Project:
         """
         project_data = {"name": self.name,
                         "description": self.description,
-                        "tasks": [{"name": "", "description": "", "upstream": []} for i in range(self.tasks_count)]}
+                        "tasks": [
+                            {"name": "", "description": "", "upstream": []} for _ in range(self.tasks_count)
+                        ]}
         self.add_tasks_to_data(project_data, self.project_task)
         with open("data/projects/" + self.file, "w") as file:
             json.dump(project_data, file)
@@ -90,3 +97,11 @@ class Project:
             # We skip tasks that have already been managed
             if project_data["tasks"][task.id]["name"] == "":
                 self.add_tasks_to_data(project_data, task)
+
+    def load(self):
+        """
+        This function is called when the project is loaded.
+        It sets the index value of each task
+        :return: None
+        """
+        c_functions.fix_indices(self)

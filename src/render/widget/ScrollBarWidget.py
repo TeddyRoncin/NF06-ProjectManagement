@@ -112,7 +112,7 @@ class ScrollBarWidget(Widget):
     def on_mouse_motion(self, pos, motion, buttons):
         """
         When the user moves the mouse. If the ratio is greater than 1, then we can't scroll and do nothing.
-        If he was not scrolling, we do nothing either.
+        If he was not scrolling, we do nothing either
         :param pos: The position of the mouse
         :param motion: The change in X and Y coordinates.
                        For example, if the user moved the mouse to the right by 1 pixel, then motion is (1, 0)
@@ -138,7 +138,8 @@ class ScrollBarWidget(Widget):
         parent_bb = self.get_parent_bb()
         is_shifting = pygame.key.get_mods() & pygame.KMOD_SHIFT != 0
         can_scroll = (self.axis == 0) == is_shifting
-        if can_scroll and self.is_in_relative_bb(self.get_relative_pos(pygame.mouse.get_pos(), bb=parent_bb), bb=parent_bb):
+        if can_scroll and \
+                self.is_in_relative_bb(self.get_relative_pos(pygame.mouse.get_pos(), bb=parent_bb), bb=parent_bb):
             self.scroll = max(self.scroll - self.mouse_scroll_amount / ((1 - self.ratio) * self.get_total_size()), 0)
 
     def on_scroll_down(self):
@@ -147,7 +148,8 @@ class ScrollBarWidget(Widget):
         parent_bb = self.get_parent_bb()
         is_shifting = pygame.key.get_mods() & pygame.KMOD_SHIFT != 0
         can_scroll = (self.axis == 0) == is_shifting
-        if can_scroll and self.is_in_relative_bb(self.get_relative_pos(pygame.mouse.get_pos(), bb=parent_bb), bb=parent_bb):
+        if can_scroll and \
+                self.is_in_relative_bb(self.get_relative_pos(pygame.mouse.get_pos(), bb=parent_bb), bb=parent_bb):
             self.scroll = min(self.scroll + self.mouse_scroll_amount / ((1 - self.ratio) * self.get_total_size()), 1)
 
 

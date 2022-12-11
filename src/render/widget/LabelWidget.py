@@ -2,6 +2,7 @@ import pygame
 
 from render.widget.Widget import Widget
 
+
 class LabelWidget(Widget):
 
     def __init__(self, pos, text):
@@ -12,7 +13,6 @@ class LabelWidget(Widget):
         self.set_text(text)
 
     def draw(self, surface):
-        print("rendering !")
         surface.blit(self.text_render, (0, 0))
 
     def set_text(self, text):

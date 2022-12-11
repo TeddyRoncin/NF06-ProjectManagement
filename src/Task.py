@@ -1,5 +1,3 @@
-import enum
-
 from TaskStatus import TaskStatus
 
 
@@ -24,7 +22,8 @@ class Task:
         self.upstream_tasks_count = 0
         self.earliest_start = 0
         self.latest_start = 0
-        # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count) should always be at least 1
+        # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count)
+        # should always be at least 1
         self.max_downstream_tasks_depth = 1
         self.max_upstream_tasks_depth = 1
         self.update_upstream_info()
@@ -45,14 +44,13 @@ class Task:
         self.update_upstream_info()
         task.update_downstream_info()
 
-    def replace_upstream_task(self, oldTask, newTask):
-        index = self.upstream_tasks.index(oldTask)
-        self.upstream_tasks[index] = newTask
-        oldTask.downstream_tasks.remove(self)
-        newTask.downstream_tasks.append(self)
+    def replace_upstream_task(self, old_task, new_task):
+        index = self.upstream_tasks.index(old_task)
+        self.upstream_tasks[index] = new_task
+        old_task.downstream_tasks.remove(self)
+        new_task.downstream_tasks.append(self)
         self.update_upstream_info()
-        newTask.update_downstream_info()
-        #oldTask.update_downstream_info()
+        new_task.update_downstream_info()
 
     def update_upstream_info(self):
         self.upstream_tasks_count = 0

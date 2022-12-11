@@ -3,7 +3,6 @@ from render.screen.AddTaskScreen import AddTaskScreen
 from render.screen.Screen import Screen
 from render.widget.ButtonWidget import ButtonWidget
 from render.widget.TaskInformationWidget import TaskInformationWidget
-from render.widget.tasks_tree.TreeWidget import TreeWidget
 from render.widget.tasks_tree.show_tasks.ShowTasksTreeWidget import ShowTasksTreeWidget
 
 
@@ -11,8 +10,11 @@ class ProjectScreen(Screen):
 
     def __init__(self, project):
         self.project = project
+        self.project.load()
         self.task_information_widget = TaskInformationWidget((100, 500))
-        self.tree_widget = ShowTasksTreeWidget((100, 100), project.beginning_task, self.task_information_widget.set_task)
+        self.tree_widget = ShowTasksTreeWidget((100, 100),
+                                               project.beginning_task,
+                                               self.task_information_widget.set_task)
         self.add_task_widget = ButtonWidget((500, 500), (30, 15), "Ajouter une tâche", self.on_add_widget)
         self.save_project_widget = ButtonWidget((700, 700), (100, 30), "Sauvegarder le projet", self.project.save)
 

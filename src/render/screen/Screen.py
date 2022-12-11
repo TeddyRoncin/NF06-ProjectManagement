@@ -26,7 +26,8 @@ class Screen:
 
     def reload(self):
         """
-        Loads or reload the screen. This is most useful when we come back to a screen, but this screen needs to be refreshed
+        Loads or reload the screen.
+        This is most useful when we come back to a screen, but this screen needs to be refreshed
         :return: None
         """
         pass
