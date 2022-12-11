@@ -77,35 +77,18 @@ void add_successor(Tasks* taskAnc, Tasks* taskSucc) {
     taskSucc->ancestors[(taskSucc->ancestorCount)++] = taskAnc;
 }
 
-void calculate_earlier_later(Tasks *task, int *earlier, int *later) {
-    if (task->earlier != -1) {
-        *earlier = task->earlier;
-        *later = task->later;
-        return;
-    }
-    if (task->ancestorCount == 0) {
-        task->earlier = 0;
-        task->later = 0;
-        *earlier = 0;
-        *later = 0;
-        return;
-    }
-    int earlierAnc = 0;
-    int laterAnc = 0;
-    for (int i = 0; i < task->ancestorCount; i++) {
-        calculate_earlier_later(task->ancestors[i], &earlierAnc, &laterAnc);
-        if (earlierAnc > *earlier) {
-            *earlier = earlierAnc;
+void task_earlier(Tasks* task) {
+    task->earlier = 0
+        for (int i = 0; i < task->ancestorCount; i++) {
+            if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
+            task->earlier = task->ancestors[i]->earlier + task->ancestors[i]->duration;
+            }
         }
-        if (laterAnc > *later) {
-            *later = laterAnc;
+        for (int i = 0; i < task->successorCount; i++) {
+            task_earlier(task->successors[i]);
         }
+        
     }
-    task->earlier = *earlier + task->duration;
-    task->later = *later + task->duration;
-    *earlier = task->earlier;
-    *later = task->later;
-}
 
 bool Identify_critical_path(Tasks* task, int* criticalTasks, int* criticalTaskCount) {
     if (task->earlier == task->later) {
