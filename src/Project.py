@@ -1,12 +1,26 @@
 import os
+import sys
 
 from Task import Task
 import json
 
+from TaskStatus import TaskStatus
 from utils import c_functions
 
 
 class Project:
+    """
+    Represents a project. A project is a list of tasks, which should be completed before it is over.
+    This class also contains a method to load all the projects.
+
+    These are the fields of a Project :
+    - name : The name of the project
+    - file : The name of the file in which the project is stored
+    - description : A description of the project
+    - tasks_count : The number of tasks of the project
+    - project_task : The task representing the end of the project. This task should be present on EVERY projects
+    - beginning_task : The task representing the start of the project. This task should be present on EVERY projects
+    """
 
     @classmethod
     def load_projects(cls):
@@ -26,8 +40,14 @@ class Project:
                     for i, task in enumerate(project_data["tasks"]):
                         tasks[i].name = task["name"]
                         tasks[i].description = task["description"]
+                        tasks[i].status = TaskStatus(int(task["status"]))
+                        # Just sharing this random fact : there are actually many convention
+                        # about using snake_case or camelCase in JSON, depending on what languages you use.
+                        # You can find a list there :
+                        # https://stackoverflow.com/questions/5543490/json-naming-convention-snake-case-camelcase-or-pascalcase#answer-25368854
+                        tasks[i].estimated_time = task["estimated_time"]
                         for upstream_task in task["upstream"]:
-                            print(f"Linking {tasks[i].id} and {upstream_task}")
+                            print(f"\tLinking {tasks[i].id} and {upstream_task}")
                             tasks[i].add_upstream_task(tasks[upstream_task])
                     # The first task of the list is the beginning task, and the second one is the project task
                     projects.append(Project(project_data["name"],
@@ -38,8 +58,8 @@ class Project:
                                             tasks[1]))
             except Exception as e:
                 non_loadable_projects.append(project_file_name)
-                print("An exception occured while loading the project")
-                print(e)
+                print("An exception occurred while loading the project", file=sys.stderr)
+                print(e, file=sys.stderr)
         return projects, non_loadable_projects
 
     def __init__(self, name, file, description="", tasks_count=2, beginning_task=None, project_task=None):
@@ -64,7 +84,7 @@ class Project:
         project_data = {"name": self.name,
                         "description": self.description,
                         "tasks": [
-                            {"name": "", "description": "", "upstream": []} for _ in range(self.tasks_count)
+                            {"name": "", "description": "", "status": 0, "estimated_time": 0, "upstream": []} for _ in range(self.tasks_count)
                         ]}
         self.add_tasks_to_data(project_data, self.project_task)
         with open("data/projects/" + self.file, "w") as file:
@@ -85,18 +105,28 @@ class Project:
             next_task = current_task.upstream_tasks[0]
             # Adding the current task to the next task's upstream_tasks list
             project_data["tasks"][current_task.id]["upstream"].append(next_task.id)
-            project_data["tasks"][current_task.id]["name"] = current_task.name
-            project_data["tasks"][current_task.id]["description"] = current_task.description
+            self.load_task_to_data(project_data, current_task)
             current_task = next_task
         if project_data["tasks"][current_task.id]["name"] != "":
             return
-        project_data["tasks"][current_task.id]["name"] = current_task.name
-        project_data["tasks"][current_task.id]["description"] = current_task.description
+        self.load_task_to_data(project_data, current_task)
         for task in current_task.upstream_tasks:
             project_data["tasks"][current_task.id]["upstream"].append(task.id)
             # We skip tasks that have already been managed
             if project_data["tasks"][task.id]["name"] == "":
                 self.add_tasks_to_data(project_data, task)
+
+    def load_task_to_data(self, project_data, task):
+        """
+        Loads a single task to the JSON data (excluding the upstream field)
+        :param project_data: The dictionary representing the JSON root object
+        :param task: The task to load
+        :return: None
+        """
+        project_data["tasks"][task.id]["name"] = task.name
+        project_data["tasks"][task.id]["description"] = task.description
+        project_data["tasks"][task.id]["status"] = task.status.value
+        project_data["tasks"][task.id]["estimated_time"] = task.estimated_time
 
     def load(self):
         """
@@ -105,3 +135,4 @@ class Project:
         :return: None
         """
         c_functions.fix_indices(self)
+        c_functions.compute_timings(self)

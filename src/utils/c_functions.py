@@ -88,21 +88,26 @@ class Task_Struct(Structure):
         self.latest_start = self._task.latest_start
         self.duration = self._task.latest_start - self._task.earliest_start
 
-    def save_indices(self):
+    @staticmethod
+    def save_indices():
         """
-        Save the indices of the Task_Struct into the Task.
-        This method does not save other data
-        This is done for every tasks that are afterwards this one. If there is an intersection, it is called recursively
+        Save the index of every Task_Struct into its corresponding Task.
+        This method does not save other data.
         :return: None
         """
-        self._task.index = self.index
-        task_struct = self
-        while len(task_struct._downstream_tasks_id) == 1:
-            task_struct = Task_Struct._tasks[task_struct._downstream_tasks_id[0]]
+        for task_struct in Task_Struct._tasks:
             task_struct._task.index = task_struct.index
-        if len(task_struct._downstream_tasks_id) > 1:
-            for i in task_struct._downstream_tasks_id:
-                Task_Struct._tasks[i].save_indices()
+
+    @staticmethod
+    def save_timings():
+        """
+        Saves the earlist_start and earliest_end of every Task_Struct into its corresponding Task.
+        This method does not save other data.
+        :return: None
+        """
+        for task_struct in Task_Struct._tasks:
+            task_struct._task.earliest_start = task_struct.earliest_start
+            task_struct._task.latest_start = task_struct.latest_start
 
     def __str__(self):
         return f"Task_Struct({self._task})"
@@ -130,6 +135,9 @@ _fill_indices = dll.fill_indice
 _fill_indices.argtypes = [POINTER(Task_Struct), POINTER(Task_Struct), POINTER(c_int), POINTER(c_int)]
 _fill_indices.restype = None
 
+_calculate_earlier_later = dll.calculate_earlier_later
+_calculate_earlier_later.argtypes = [POINTER(Task_Struct), POINTER(c_int), POINTER(c_int)]
+
 
 def fix_indices(project):
     """
@@ -143,5 +151,19 @@ def fix_indices(project):
     first_task = Task_Struct.get_converted_task(project.beginning_task)
     last_task = Task_Struct.get_converted_task(project.project_task)
     _fill_indices(byref(first_task), byref(last_task), byref(first_index), byref(last_index))
-    first_task.save_indices()
+    Task_Struct.save_indices()
 
+
+def compute_timings(project):
+    """
+    Compute timings of the tasks in the project
+    This means it sets the values of earliest_start and latest_start
+    :param project: The project
+    :return: None
+    """
+    Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
+    last_task = Task_Struct.get_converted_task(project.project_task)
+    earlier = c_int(0)
+    later = c_int(0)
+    _calculate_earlier_later(byref(last_task), byref(earlier), byref(later))
+    Task_Struct.save_timings()

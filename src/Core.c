@@ -168,16 +168,16 @@ int main()
     Tasks* taskAnc8[1];
     Tasks* taskAnc9[1];
     Tasks* taskAnc10[1];
-    Tasks task1 = {.id=1, .successors=taskSucc1, .ancestors=taskAnc1};
-    Tasks task2 = {.id=2, .successors=taskSucc2, .ancestors=taskAnc2};
-    Tasks task3 = {.id=3, .successors=taskSucc3, .ancestors=taskAnc3};
-    Tasks task4 = {.id=4, .successors=taskSucc4, .ancestors=taskAnc4};
-    Tasks task5 = {.id=5, .successors=taskSucc5, .ancestors=taskAnc5};
-    Tasks task6 = {.id=6, .successors=taskSucc6, .ancestors=taskAnc6};
-    Tasks task7 = {.id=7, .successors=taskSucc7, .ancestors=taskAnc7};
-    Tasks task8 = {.id=8, .successors=taskSucc8, .ancestors=taskAnc8};
-    Tasks task9 = {.id=9, .successors=taskSucc9, .ancestors=taskAnc9};
-    Tasks task10 = {.id=10, .successors=taskSucc10, .ancestors=taskAnc10};
+    Tasks task1 = {.id=1, .successors=taskSucc1, .ancestors=taskAnc1, .duration=10};
+    Tasks task2 = {.id=2, .successors=taskSucc2, .ancestors=taskAnc2, .duration=10};
+    Tasks task3 = {.id=3, .successors=taskSucc3, .ancestors=taskAnc3, .duration=10};
+    Tasks task4 = {.id=4, .successors=taskSucc4, .ancestors=taskAnc4, .duration=10};
+    Tasks task5 = {.id=5, .successors=taskSucc5, .ancestors=taskAnc5, .duration=10};
+    Tasks task6 = {.id=6, .successors=taskSucc6, .ancestors=taskAnc6, .duration=10};
+    Tasks task7 = {.id=7, .successors=taskSucc7, .ancestors=taskAnc7, .duration=10};
+    Tasks task8 = {.id=8, .successors=taskSucc8, .ancestors=taskAnc8, .duration=10};
+    Tasks task9 = {.id=9, .successors=taskSucc9, .ancestors=taskAnc9, .duration=10};
+    Tasks task10 = {.id=10, .successors=taskSucc10, .ancestors=taskAnc10, .duration=10};
     
     add_successor(&task1, &task2);
     add_successor(&task2, &task3);
@@ -193,7 +193,10 @@ int main()
     
     int firstTaskIndex = 0, lastTaskIndex = 9;
     fill_indice(&task1, &task8, &firstTaskIndex, &lastTaskIndex);
-    printf("%d %d %d %d %d %d %d %d %d %d", task1.index, task2.index, task3.index, task4.index, task5.index, task6.index, task7.index, task8.index, task9.index, task10.index);
-    
+    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.index, task2.index, task3.index, task4.index, task5.index, task6.index, task7.index, task8.index, task9.index, task10.index);
+    int earlier = 100, later = 100;
+    calculate_earlier_later(&task8, &earlier, &later);
+    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.earlier, task2.earlier, task3.earlier, task4.earlier, task5.earlier, task6.earlier, task7.earlier, task8.earlier, task9.earlier, task10.earlier);
+    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.later, task2.later, task3.later, task4.later, task5.later, task6.later, task7.later, task8.later, task9.later, task10.later);
     return 0;
 }
