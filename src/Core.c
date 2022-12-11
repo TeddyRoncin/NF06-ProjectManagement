@@ -90,6 +90,25 @@ void task_earlier(Tasks* task) {
         
     }
 
+
+void task_later(Tasks* task) {
+    if (task->successorCount == 0) {
+        task->later = task->earlier;
+    }
+    else {
+        task->later = task->successors[0]->later - task->duration;
+        for (int i = 1; i < task->successorCount; i++) {
+            if (task->later > task->successors[i]->later - task->duration) {
+                task->later = task->successors[i]->later - task->duration;
+            }
+        }
+    }
+    for (int i = 0; i < task->ancestorCount; i++) {
+        task_later(task->ancestors[i]);
+    }
+}
+
+
 bool Identify_critical_path(Tasks* task, int* criticalTasks, int* criticalTaskCount) {
     if (task->earlier == task->later) {
         criticalTasks[(*criticalTaskCount)++] = task->id;
