@@ -1,8 +1,11 @@
 import pygame
 
+from Project import Project
 from render.Window import Window
+from render.screen.CreateProjectScreen import CreateProjectScreen
 from render.screen.ProjectScreen import ProjectScreen
 from render.screen.Screen import Screen
+from render.widget.ButtonWidget import ButtonWidget
 from render.widget.ListWidget import ListWidget
 
 
@@ -21,11 +24,12 @@ class HomeScreen(Screen):
         Creates a new HomeScreen
         """
         if projects is None:
-            projects = []
+            projects = Project.projects
         self.projects = projects
         self.project_list = ListWidget(pygame.Rect(100, 100, 300, 50),
                                        [project.name for project in self.projects],
                                        on_item_clicked=self.on_select_project)
+        self.create_project_button = ButtonWidget((100, 200), (100, 30), "Créer un projet", self.on_create_project)
 
     def get_widgets(self):
         """
@@ -34,6 +38,7 @@ class HomeScreen(Screen):
                  There, the only element in the generator is the widget project_list
         """
         yield self.project_list
+        yield self.create_project_button
 
     def set_projects(self, projects):
         """
@@ -52,3 +57,10 @@ class HomeScreen(Screen):
         """
         Window.instance.set_screen(ProjectScreen(
             [project for project in self.projects if project.name == project_name][0]))
+
+    def on_create_project(self):
+        """
+        Callback from self.create_project_button. It is called when the user wants to create a new project.
+        :return: None
+        """
+        Window.instance.set_screen(CreateProjectScreen())

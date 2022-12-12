@@ -22,8 +22,11 @@ class Project:
     - beginning_task : The task representing the start of the project. This task should be present on EVERY projects
     """
 
-    @classmethod
-    def load_projects(cls):
+    projects = []
+    non_loadable_projects = []
+
+    @staticmethod
+    def load_projects():
         """
         Loads the projects. Each project is a JSON file stored in the data/projects directory
         :return: A tuple. The first value is the list of projects,
@@ -60,7 +63,33 @@ class Project:
                 non_loadable_projects.append(project_file_name)
                 print("An exception occurred while loading the project", file=sys.stderr)
                 print(e, file=sys.stderr)
+        Project.projects = projects
+        Project.non_loadable_projects = non_loadable_projects
         return projects, non_loadable_projects
+
+    @staticmethod
+    def create_project(name, description, file_name):
+        """
+        Creates a new project. It also creates the JSON file
+        :param name: The name of the project
+        :param description: The description of the project
+        :param file_name: The name of the file in which the project will be saved
+        :return: The newly created project
+        """
+        project = Project(name, file_name, description)
+        Project.projects.append(project)
+        project.save()
+        return project
+
+    @staticmethod
+    def delete_project(project):
+        """
+        Deletes a project. The deletion is permanent, because the file is also deleted.
+        :param project: The project to delete
+        :return: None
+        """
+        Project.projects.remove(project)
+        os.remove("data/projects/" + project.file)
 
     def __init__(self, name, file, description="", tasks_count=2, beginning_task=None, project_task=None):
         """
@@ -75,6 +104,9 @@ class Project:
         self.tasks_count = tasks_count
         self.project_task = Task(1, name) if project_task is None else project_task
         self.beginning_task = Task(0, name) if beginning_task is None else beginning_task
+        # If we created the tasks, then we need to link them
+        if project_task is None or beginning_task is None:
+            self.project_task.add_upstream_task(self.beginning_task)
 
     def save(self):
         """
@@ -135,4 +167,5 @@ class Project:
         :return: None
         """
         c_functions.fix_indices(self)
-        c_functions.compute_timings(self)
+        c_functions.compute_earliest_start(self)
+        c_functions.compute_latest_start(self)
