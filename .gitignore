@@ -4,3 +4,4 @@ venv/
 **/__pycache__/*
 Core.so
 Core.dll
+docs/
