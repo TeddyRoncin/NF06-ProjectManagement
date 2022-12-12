@@ -29,12 +29,10 @@ class Task_Struct(Structure):
             # There should not be any, but we still check, just in case
             # If this occurs, code may not continue working properly
             if task is None:
-                print(f"Task with id {id} doesn't seem to exist. "
+                print(f"Task with id {i} doesn't seem to exist. "
                       f"This error occured while converting tasks to task structures", file=sys.stderr)
                 continue
             task.load()
-        # Return the first task
-        return Task_Struct._tasks[0]
 
     @staticmethod
     def get_converted_task(task):
@@ -63,8 +61,8 @@ class Task_Struct(Structure):
         self.ancestors_count = 0
         self.index = 0
         self.duration = 0
-        self.earliest_start = 0
-        self.latest_start = 0
+        self.earlier = 0
+        self.later = 0
         self.duration = 0
 
     def load(self):
@@ -78,15 +76,14 @@ class Task_Struct(Structure):
         self.successors = cast(downstream_tasks_array_type(*downstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
         upstream_tasks_array_type = POINTER(Task_Struct) * len(self._upstream_tasks_id)
         upstream_tasks_pointers = [pointer(Task_Struct._tasks[i]) for i in self._upstream_tasks_id]
-        self. ancestors = cast(upstream_tasks_array_type(*upstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
+        self.ancestors = cast(upstream_tasks_array_type(*upstream_tasks_pointers), POINTER(POINTER(Task_Struct)))
         self.id = c_int(self._task.id)
         self.successors_count = len(self._task.downstream_tasks)
         self.ancestors_count = len(self._task.upstream_tasks)
         self.index = c_int(self._task.index)
         self.duration = self._task.estimated_time
-        self.earliest_start = self._task.earliest_start
-        self.latest_start = self._task.latest_start
-        self.duration = self._task.latest_start - self._task.earliest_start
+        self.earlier = self._task.earliest_start
+        self.later = self._task.latest_start
 
     @staticmethod
     def save_indices():
@@ -99,15 +96,24 @@ class Task_Struct(Structure):
             task_struct._task.index = task_struct.index
 
     @staticmethod
-    def save_timings():
+    def save_earliest_start():
         """
         Saves the earlist_start and earliest_end of every Task_Struct into its corresponding Task.
         This method does not save other data.
         :return: None
         """
         for task_struct in Task_Struct._tasks:
-            task_struct._task.earliest_start = task_struct.earliest_start
-            task_struct._task.latest_start = task_struct.latest_start
+            task_struct._task.earliest_start = task_struct.earlier
+
+    @staticmethod
+    def save_latest_start():
+        """
+        Saves the earlist_start and earliest_end of every Task_Struct into its corresponding Task.
+        This method does not save other data.
+        :return: None
+        """
+        for task_struct in Task_Struct._tasks:
+            task_struct._task.latest_start = task_struct.later
 
     def __str__(self):
         return f"Task_Struct({self._task})"
@@ -125,8 +131,8 @@ Task_Struct._fields_ = [
     ('ancestors_count', c_int),
     ('index', c_int),
     ('duration', c_int),
-    ('earliest_start', c_int),
-    ('latest_start', c_int),
+    ('earlier', c_int),
+    ('later', c_int),
     ('marge', c_int),
 ]
 
@@ -135,8 +141,11 @@ _fill_indices = dll.fill_indice
 _fill_indices.argtypes = [POINTER(Task_Struct), POINTER(Task_Struct), POINTER(c_int), POINTER(c_int)]
 _fill_indices.restype = None
 
-_calculate_earlier_later = dll.calculate_earlier_later
-_calculate_earlier_later.argtypes = [POINTER(Task_Struct), POINTER(c_int), POINTER(c_int)]
+_task_earlier = dll.task_earlier
+_task_earlier.argtypes = [POINTER(Task_Struct)]
+
+_task_later = dll.task_later
+_task_later.argtypes = [POINTER(Task_Struct)]
 
 
 def fix_indices(project):
@@ -150,20 +159,30 @@ def fix_indices(project):
     Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
     first_task = Task_Struct.get_converted_task(project.beginning_task)
     last_task = Task_Struct.get_converted_task(project.project_task)
+    print(Task_Struct._tasks)
     _fill_indices(byref(first_task), byref(last_task), byref(first_index), byref(last_index))
     Task_Struct.save_indices()
 
 
-def compute_timings(project):
+def compute_earliest_start(project):
     """
-    Compute timings of the tasks in the project
-    This means it sets the values of earliest_start and latest_start
+    Compute the earliest_start of each task of the project
+    :param project: The project
+    :return: None
+    """
+    Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
+    first_task = Task_Struct.get_converted_task(project.beginning_task)
+    _task_earlier(byref(first_task))
+    Task_Struct.save_earliest_start()
+
+
+def compute_latest_start(project):
+    """
+    Compute the earliest_start of each task of the project
     :param project: The project
     :return: None
     """
     Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
     last_task = Task_Struct.get_converted_task(project.project_task)
-    earlier = c_int(0)
-    later = c_int(0)
-    _calculate_earlier_later(byref(last_task), byref(earlier), byref(later))
-    Task_Struct.save_timings()
+    _task_later(byref(last_task))
+    Task_Struct.save_latest_start()
