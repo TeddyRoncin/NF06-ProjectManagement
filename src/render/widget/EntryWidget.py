@@ -9,7 +9,7 @@ from utils import timing_functions
 
 class EntryWidget(Widget):
 
-    def __init__(self, pos, min_size, max_size, max_chars, multiple_lines):
+    def __init__(self, pos, min_size, max_size, max_chars, multiple_lines, default_content=""):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 16)
         self.font_height = self.font.get_height() + 4
@@ -26,6 +26,7 @@ class EntryWidget(Widget):
         self.cursor_position = [0, 0]
         self.cursor_surface = pygame.Surface((2, self.font.get_height()))
         self.cursor_animation = self._generate_cursor_animation()
+        self.set_content(default_content)
 
     def _generate_cursor_animation(self):
         animation_effect = AppearEffect(timing_functions.cursor)
@@ -118,6 +119,10 @@ class EntryWidget(Widget):
 
     def get_content(self):
         return "\n".join(self.content)
+
+    def set_content(self, content):
+        self.content = content.split("\n")
+        self.cursor_position = [0, 0]
 
 
 __all__ = [EntryWidget]

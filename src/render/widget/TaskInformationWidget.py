@@ -1,16 +1,23 @@
 import pygame
 
+from render.widget.ButtonWithConfirmationWidget import ButtonWithConfirmationWidget
 from render.widget.Widget import Widget
 
 
 class TaskInformationWidget(Widget):
 
-    def __init__(self, pos):
+    def __init__(self, pos, on_delete_task):
         super().__init__()
         self.bb = pygame.Rect(pos, (600, 200))
         self.task = None
         self.font = pygame.font.SysFont("Arial", 20)
         self.render = None
+        self.can_delete = True
+        self.delete_button = ButtonWithConfirmationWidget((self.bb.x + 300, self.bb.y + 10), (100, 50), "Supprimer", lambda: on_delete_task(self.task))
+
+    def get_children(self):
+        if self.task is not None and self.can_delete:
+            yield self.delete_button
 
     def draw(self, surface):
         if self.task is None:
@@ -33,3 +40,16 @@ class TaskInformationWidget(Widget):
     def set_task(self, task):
         self.task = task
         self.generate_render()
+        if self.task is None:
+            return
+        if self.task.is_beginning_task:
+            self.can_delete = False
+        elif self.task.is_project_task:
+            self.can_delete = False
+        elif len(self.task.upstream_tasks) > 1 and len(self.task.downstream_tasks[0].upstream_tasks) > 1:
+            self.can_delete = False
+        elif len(self.task.downstream_tasks) > 1 and len(self.task.upstream_tasks[0].downstream_tasks) > 1:
+            self.can_delete = False
+        else:
+            self.can_delete = True
+
