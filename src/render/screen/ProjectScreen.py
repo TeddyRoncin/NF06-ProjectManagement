@@ -1,4 +1,4 @@
-from render.GanttWidget import GanttWidget
+from render.widget.GanttWidget import GanttWidget
 from render.Window import Window
 from render.screen.AddTaskScreen import AddTaskScreen
 from render.screen.ProjectSettingsScreen import ProjectSettingsScreen

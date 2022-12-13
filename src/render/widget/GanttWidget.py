@@ -1,8 +1,9 @@
 import pygame
 
-from render.GanttTaskWidget import GanttTaskWidget
+from render.widget.GanttTaskWidget import GanttTaskWidget
 from render.widget.ScrollBarWidget import ScrollBarWidget
 from render.widget.Widget import Widget
+
 
 class GanttWidget(Widget):
 
@@ -19,6 +20,9 @@ class GanttWidget(Widget):
     def get_children(self):
         yield from self.task_widgets
         yield self.scroll_bar
+
+    def draw(self, surface):
+        surface.fill(0xffffff)
 
     def generate_widgets(self, first_task):
         self.task_widgets.append(
