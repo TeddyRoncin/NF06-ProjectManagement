@@ -36,6 +36,7 @@ class TaskInformationWidget(Widget):
         self.render.blit(self.font.render("Peut démarrer à partir de : " + str(self.task.earliest_start), True, (0, 0, 0)), (3, 83))
         self.render.blit(self.font.render("Peut démarrer jusqu'au : " + str(self.task.latest_start), True, (0, 0, 0)), (3, 103))
         self.render.blit(self.font.render("Statut : " + str(self.task.status), True, (0, 0, 0)), (3, 123))
+        self.render.blit(self.font.render("Id de la tâche : " + str(self.task.id), True, (0, 0, 0)), (3, 143))
 
     def set_task(self, task):
         self.task = task

@@ -15,7 +15,7 @@ class GanttWidget(Widget):
         self.y_offset = 0
         self.task_widgets = []
         self.total_time = self.project.project_task.earliest_start + self.project.project_task.estimated_time
-        self.generate_widgets(project.beginning_task)
+        self.generate_widgets(self.project.beginning_task)
 
     def get_children(self):
         yield from self.task_widgets
@@ -23,6 +23,9 @@ class GanttWidget(Widget):
 
     def draw(self, surface):
         surface.fill(0xffffff)
+
+    def reload(self):
+        self.generate_widgets(self.project.beginning_task)
 
     def generate_widgets(self, first_task):
         self.task_widgets.append(

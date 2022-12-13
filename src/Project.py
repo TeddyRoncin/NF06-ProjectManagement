@@ -56,9 +56,7 @@ class Project:
                     projects.append(Project(project_data["name"],
                                             project_file_name,
                                             project_data["description"],
-                                            len(project_data["tasks"]),
-                                            tasks[0],
-                                            tasks[1]))
+                                            tasks))
             except Exception as e:
                 non_loadable_projects.append(project_file_name)
                 print("An exception occurred while loading the project", file=sys.stderr)
@@ -91,22 +89,134 @@ class Project:
         Project.projects.remove(project)
         os.remove("data/projects/" + project.file)
 
-    def __init__(self, name, file, description="", tasks_count=2, beginning_task=None, project_task=None):
+    def __init__(self, name, file, description="", tasks=None):
         """
         Represents a project. A project has a name, a file name, a description.
         A project must have at least 2 tasks :
             * the beginning_task (represents the beginning of the project)
             * the project_task (represents the project ending).
         """
+        if tasks is None:
+            tasks = [Task(1, name), Task(2, name)]
+            # We need to link the 2 tasks
+            tasks[1].add_upstream_task(tasks[0])
         self.name = name
         self.file = file
         self.description = description
-        self.tasks_count = tasks_count
-        self.project_task = Task(1, name) if project_task is None else project_task
-        self.beginning_task = Task(0, name) if beginning_task is None else beginning_task
-        # If we created the tasks, then we need to link them
-        if project_task is None or beginning_task is None:
-            self.project_task.add_upstream_task(self.beginning_task)
+        self.tasks = tasks
+        self.tasks_count = len(self.tasks)
+        self.project_task = tasks[1]
+        self.beginning_task = tasks[0]
+
+    def add_task(self, name, description, upstream_tasks, create_new_branch):
+        """
+        Adds a new task to the project.
+        :param name: The name of the task
+        :param description: The description of the task
+        :param upstream_tasks: The upstream tasks of this task
+        :param create_new_branch: Whether to create the task on a new branch
+        :return: None
+        """
+        task = Task(name=name, description=description, id_=self.tasks_count)
+        if create_new_branch:
+            upstream_task = upstream_tasks.pop()
+            downstream_task = upstream_task.downstream_tasks[0]
+            # Then we have to create an intersection. The end of the intersection is the end of the branch
+            if len(upstream_task.downstream_tasks) == 1:
+                depth = 1
+                last_downstream_task = upstream_task
+                # We find the end of the branch
+                # (it could be the last one, so we also check the if that it isn't to avoid running into an error)
+                while len(downstream_task.downstream_tasks) != 0 and depth != 0:
+                    # We are entering an intersection
+                    if len(downstream_task.downstream_tasks) > 1:
+                        depth += 1
+                    last_downstream_task = downstream_task
+                    downstream_task = downstream_task.downstream_tasks[0]
+                    # We are leaving an intersection
+                    if len(downstream_task.upstream_tasks) > 1:
+                        depth -= 1
+                # We don't want to go back if we left the loop because we arrived at the last task
+                if len(downstream_task.downstream_tasks) != 0:
+                    downstream_task = last_downstream_task
+            else:
+                depth = 1
+                # We find the end of the intersection
+                while depth != 0:
+                    # We are entering an intersection
+                    if len(downstream_task.downstream_tasks) > 1:
+                        depth += 1
+                    downstream_task = downstream_task.downstream_tasks[0]
+                    # We are leaving an intersection
+                    if len(downstream_task.upstream_tasks) > 1:
+                        depth -= 1
+            downstream_task.add_upstream_task(task)
+            # Finally, link task and upstream_task
+            task.add_upstream_task(upstream_task)
+        # We are not creating a new branch
+        else:
+            # Then there could be multiple downstream tasks
+            if len(upstream_tasks) == 1:
+                upstream_task = upstream_tasks.pop()
+                downstream_tasks = list(upstream_task.downstream_tasks)
+                task.add_upstream_task(upstream_task)
+                for downstream_task in downstream_tasks:
+                    downstream_task.replace_upstream_task(upstream_task, task)
+            # Then there is only one downstream task
+            else:
+                downstream_task = next(iter(upstream_tasks)).downstream_tasks[0]
+                # Copy tasks, because we are going to modify the list
+                all_upstream_tasks = list(downstream_task.upstream_tasks)
+                downstream_task.add_upstream_task(task)
+                # We do it this way to be sure the upstream tasks are added in the right order
+                for upstream_task in all_upstream_tasks:
+                    if upstream_task in upstream_tasks:
+                        downstream_task.remove_upstream_task(upstream_task)
+                        task.add_upstream_task(upstream_task)
+        # We add the task to the project
+        self.tasks.append(task)
+        self.tasks_count += 1
+        # And finally we fix all the indices
+        c_functions.fix_indices(self)
+
+    def remove_task(self, task):
+        """
+        Removes a task from the project.
+        :param task: The task to remove
+        :return: None
+        """
+        # This is a branch with a length of 1, so we simply need to remove it
+        if len(task.upstream_tasks[0].downstream_tasks) > 1 and len(task.downstream_tasks[0].upstream_tasks) > 1:
+            # The task cannot have multiple upstream and downstream tasks
+            task.remove_upstream_task(task.upstream_tasks[0])
+            task.downstream_tasks[0].remove_upstream_task(task)
+        elif len(task.upstream_tasks) > 1:
+            upstream_tasks = list(task.upstream_tasks)
+            for upstream_task in upstream_tasks:
+                print(upstream_task)
+                print(upstream_task.downstream_tasks)
+                task.remove_upstream_task(upstream_task)
+                task.downstream_tasks[0].add_upstream_task(upstream_task)
+                print(upstream_task.downstream_tasks)
+            task.downstream_tasks[0].remove_upstream_task(task)
+        elif len(task.downstream_tasks) > 1:
+            downstream_tasks = list(task.downstream_tasks)
+            for downstream_task in downstream_tasks:
+                downstream_task.remove_upstream_task(task)
+                downstream_task.add_upstream_task(task.upstream_tasks[0])
+            task.remove_upstream_task(task.upstream_tasks[0])
+        else:
+            task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0])
+            task.remove_upstream_task(task.upstream_tasks[0])
+            task.downstream_tasks[0].remove_upstream_task(task)
+        # We remove the task from the project
+        self.tasks.pop(task.id)
+        self.tasks_count -= 1
+        # Then, we have to shift every task id greater than task.id by -1
+        for i in range(task.id, len(self.tasks)):
+            task.id -= 1
+        # And finally we fix all the indices
+        c_functions.fix_indices(self)
 
     def save(self):
         """

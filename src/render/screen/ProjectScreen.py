@@ -13,6 +13,7 @@ class ProjectScreen(Screen):
     def __init__(self, project):
         self.project = project
         self.project.load()
+
         self.task_information_widget = TaskInformationWidget((100, 500), self.delete_task)
         self.tree_widget = ShowTasksTreeWidget((100, 100),
                                                project.beginning_task,
@@ -33,6 +34,7 @@ class ProjectScreen(Screen):
 
     def reload(self):
         self.tree_widget.reload()
+        self.gantt_widget.reload()
 
     def on_add_widget(self):
         Window.instance.set_screen(AddTaskScreen(self.project, self))
@@ -41,30 +43,7 @@ class ProjectScreen(Screen):
         Window.instance.set_screen(ProjectSettingsScreen(self.project, self))
 
     def delete_task(self, task):
-        # This is a branch with a length of 1, so we simply need to remove it
-        if len(task.upstream_tasks[0].downstream_tasks) > 1 and len(task.downstream_tasks[0].upstream_tasks) > 1:
-            # The task cannot have multiple upstream and downstream tasks
-            task.remove_upstream_task(task.upstream_tasks[0])
-            task.downstream_tasks[0].remove_upstream_task(task)
-        elif len(task.upstream_tasks) > 1:
-            upstream_tasks = list(task.upstream_tasks)
-            for upstream_task in upstream_tasks:
-                print(upstream_task)
-                print(upstream_task.downstream_tasks)
-                task.remove_upstream_task(upstream_task)
-                task.downstream_tasks[0].add_upstream_task(upstream_task)
-                print(upstream_task.downstream_tasks)
-            task.downstream_tasks[0].remove_upstream_task(task)
-        elif len(task.downstream_tasks) > 1:
-            downstream_tasks = list(task.downstream_tasks)
-            for downstream_task in downstream_tasks:
-                downstream_task.remove_upstream_task(task)
-                downstream_task.add_upstream_task(task.upstream_tasks[0])
-            task.remove_upstream_task(task.upstream_tasks[0])
-        else:
-            task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0])
-            task.remove_upstream_task(task.upstream_tasks[0])
-            task.downstream_tasks[0].remove_upstream_task(task)
+        self.project.remove_task(task)
         self.reload()
 
 

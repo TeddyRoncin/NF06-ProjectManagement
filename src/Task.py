@@ -3,13 +3,9 @@ from TaskStatus import TaskStatus
 
 class Task:
 
-    next_id = 0
-
-    def __init__(self, id_=None, name="", description="", estimated_time=0):
+    def __init__(self, id_, name="", description="", estimated_time=0):
         super().__init__()
-        if id_ is None:
-            id_ = Task.next_id
-        Task.next_id = max(Task.next_id, id_ + 1)
+        print("creating task with id " + str(id_))
         self.id = id_
         self.index = 0
         self.name = name
