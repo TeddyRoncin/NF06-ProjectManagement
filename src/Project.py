@@ -29,6 +29,7 @@ class Project:
     def load_projects():
         """
         Loads the projects. Each project is a JSON file stored in the data/projects directory
+        Projects are stored in the projects list, and non-loadable projects are stored in the non_loadable_projects list
         :return: A tuple. The first value is the list of projects,
                  and the second value is the list of non-loadable projects
         """
@@ -290,3 +291,4 @@ class Project:
         c_functions.fix_indices(self)
         c_functions.compute_earliest_start(self)
         c_functions.compute_latest_start(self)
+        c_functions.identify_critical_tasks(self)

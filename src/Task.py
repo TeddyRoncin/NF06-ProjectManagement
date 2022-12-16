@@ -5,7 +5,6 @@ class Task:
 
     def __init__(self, id_, name="", description="", estimated_time=0):
         super().__init__()
-        print("creating task with id " + str(id_))
         self.id = id_
         self.index = 0
         self.name = name
@@ -20,6 +19,7 @@ class Task:
         self.latest_start = 0
         self.is_beginning_task = self.id == 0
         self.is_project_task = self.id == 1
+        self.is_critical = True
         # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count)
         # should always be at least 1
         self.max_downstream_tasks_depth = 1

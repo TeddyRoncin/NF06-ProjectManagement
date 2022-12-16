@@ -30,7 +30,7 @@ class Task_Struct(Structure):
             # If this occurs, code may not continue working properly
             if task is None:
                 print(f"Task with id {i} doesn't seem to exist. "
-                      f"This error occured while converting tasks to task structures", file=sys.stderr)
+                      f"This error occurred while converting tasks to task structures", file=sys.stderr)
                 continue
             task.load()
 
@@ -64,6 +64,7 @@ class Task_Struct(Structure):
         self.earlier = 0
         self.later = 0
         self.duration = 0
+        self.is_critical = False
 
     def load(self):
         """
@@ -84,6 +85,7 @@ class Task_Struct(Structure):
         self.duration = self._task.estimated_time
         self.earlier = self._task.earliest_start
         self.later = self._task.latest_start
+        self.is_critical = self._task.is_critical
 
     @staticmethod
     def save_indices():
@@ -98,7 +100,7 @@ class Task_Struct(Structure):
     @staticmethod
     def save_earliest_start():
         """
-        Saves the earlist_start and earliest_end of every Task_Struct into its corresponding Task.
+        Saves the earliest_start of every Task_Struct into its corresponding Task.
         This method does not save other data.
         :return: None
         """
@@ -108,12 +110,22 @@ class Task_Struct(Structure):
     @staticmethod
     def save_latest_start():
         """
-        Saves the earlist_start and earliest_end of every Task_Struct into its corresponding Task.
+        Saves the latest_start of every Task_Struct into its corresponding Task.
         This method does not save other data.
         :return: None
         """
         for task_struct in Task_Struct._tasks:
             task_struct._task.latest_start = task_struct.later
+
+    @staticmethod
+    def save_criticality():
+        """
+        Saves the value is_critical of every Task_Struct into its corresponding Task.
+        This method does not save other data.
+        :return: None
+        """
+        for task_struct in Task_Struct._tasks:
+            task_struct._task.is_critical = bool(task_struct.is_critical)
 
     def __str__(self):
         return f"Task_Struct({self._task})"
@@ -134,6 +146,7 @@ Task_Struct._fields_ = [
     ('earlier', c_int),
     ('later', c_int),
     ('marge', c_int),
+    ('is_critical', c_int),
 ]
 
 # Functions of the dll
@@ -147,6 +160,9 @@ _task_earlier.argtypes = [POINTER(Task_Struct)]
 _task_later = dll.task_later
 _task_later.argtypes = [POINTER(Task_Struct)]
 
+_identify_critical = dll.identify_critical
+_identify_critical.argtypes = [POINTER(Task_Struct)]
+
 
 def fix_indices(project):
     """
@@ -159,7 +175,6 @@ def fix_indices(project):
     Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
     first_task = Task_Struct.get_converted_task(project.beginning_task)
     last_task = Task_Struct.get_converted_task(project.project_task)
-    print(Task_Struct._tasks)
     _fill_indices(byref(first_task), byref(last_task), byref(first_index), byref(last_index))
     Task_Struct.save_indices()
 
@@ -186,3 +201,15 @@ def compute_latest_start(project):
     last_task = Task_Struct.get_converted_task(project.project_task)
     _task_later(byref(last_task))
     Task_Struct.save_latest_start()
+
+
+def identify_critical_tasks(project):
+    """
+    Sets the value of is_critical for each task of the project
+    :param project: The project
+    :return: None
+    """
+    Task_Struct.convert_tasks(project.beginning_task, project.tasks_count)
+    first_task = Task_Struct.get_converted_task(project.beginning_task)
+    _identify_critical(byref(first_task))
+    Task_Struct.save_criticality()

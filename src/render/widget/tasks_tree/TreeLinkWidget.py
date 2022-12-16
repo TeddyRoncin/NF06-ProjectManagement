@@ -20,10 +20,13 @@ class TreeLinkWidget(Widget):
         self.get_parent_bb = get_parent_bb
 
     def draw(self, surface):
+        self._draw(surface, 0x333333)
+
+    def _draw(self, surface, color):
         start_pos, end_pos = self.get_positions_coords()
         offset = self.compute_drawing_offset()
         pygame.draw.line(surface,
-                         (0, 0, 255),
+                         color,
                          (start_pos[0] + offset[0], start_pos[1] + offset[1]),
                          (end_pos[0] + offset[0], end_pos[1] + offset[1]),
                          3)
