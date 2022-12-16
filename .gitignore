@@ -5,3 +5,6 @@ venv/
 Core.so
 Core.dll
 docs/
+main.spec
+dist/
+build/
