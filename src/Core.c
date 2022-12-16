@@ -31,6 +31,7 @@ typedef struct Tasks {
     int earlier;
     int later;
     int marge;
+    bool isCritical;
 } Tasks;
 /*
 * @brief Application de gantt_pert permet d'effectuer les calculs nécessaires pour gérer des diagrammes de Gantt et PERT
@@ -108,31 +109,16 @@ void task_later(Tasks* task) {
 }
 
 
-bool Identify_critical_path(Tasks* task, int* criticalTasks, int* criticalTaskCount) {
+void identify_critical(Tasks* task) {
     if (task->earlier == task->later) {
-        criticalTasks[(*criticalTaskCount)++] = task->id;
-        bool found_critical = false;
-        for (int i = 0; i < task->successorCount && !found_critical; i++ ) {
-            found_critical = Identify_critical_path(task->successors[i], criticalTasks, criticalTaskCount);
-        }
-        return true;
-    }
-    return false;
-
-}
-
-
-void calculate_marge(Tasks* task, int* marge) {
-    if (task->earlier != task->later) {
-        task->marge = task->later - task->earlier;
-    }
-    else if (task->earlier == task->later) {
-         task->marge= 0;
+        task->isCritical = true;
     }
     for (int i = 0; i < task->successorCount; i++) {
-        calculate_marge(task->successors[i], marge);
+        identify_critical(task->successors[i]);
     }
 }
+
+
 
 void Gantt_chart(Tasks* task, int* Gantt, int* ordreCount) {
     //vérifier si task fait partie de la liste des tâches critiques
