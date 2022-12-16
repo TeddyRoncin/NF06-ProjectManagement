@@ -113,6 +113,10 @@ void identify_critical(Tasks* task) {
     if (task->earlier == task->later) {
         task->isCritical = true;
     }
+ else
+     {
+       task->isCritical = false;
+     }
     for (int i = 0; i < task->successorCount; i++) {
         identify_critical(task->successors[i]);
     }
