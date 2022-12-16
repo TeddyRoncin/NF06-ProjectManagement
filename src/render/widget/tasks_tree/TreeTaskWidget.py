@@ -1,7 +1,6 @@
 import pygame
 
 from render.widget.Widget import Widget
-from utils.pygame_utils import crop_bb_to_fit
 
 
 class TreeTaskWidget(Widget):
@@ -9,8 +8,7 @@ class TreeTaskWidget(Widget):
     def __init__(self, task, position, get_position_offset, get_parent_bb):
         super().__init__()
         self.task = task
-        self.base_bb = pygame.Rect(position[0] - 20, position[1] - 20, 40, 40)
-        self.bb = self.base_bb.copy()
+        self.bb = pygame.Rect(position[0] - 20, position[1] - 20, 40, 40)
         # Avoid computations repetition in the draw function
         self.actual_bb = self.bb.copy()
         self.get_position_offset = get_position_offset
@@ -35,10 +33,8 @@ class TreeTaskWidget(Widget):
         surface.blit(font.render(self.task.name, False, pygame.Color(0, 255, 0)), (10 + offset[0], 10 + offset[1]))
 
     def get_bb(self):
-        self.actual_bb = self.base_bb.move(self.get_position_offset())
+        self.actual_bb = self.bb.move(self.get_position_offset())
         parent_bb = self.get_parent_bb()
-        crop_bb_to_fit(self.actual_bb, parent_bb)
+        self.actual_bb = self.actual_bb.clip(parent_bb)
         return self.actual_bb
 
-    def update_position_offset(self, offset):
-        self.bb = pygame.Rect(self.base_bb.x + offset[0], self.base_bb.y + offset[1], *self.base_bb.size)

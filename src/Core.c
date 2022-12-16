@@ -37,7 +37,7 @@ typedef struct Tasks {
  *
  * @param taskCount: Nombre des tâches.
  * @param Tasks: type de variables tâches .
- * @param seccesors: liste des seccesseurs.
+ * @param succesors: liste des successeurs.
  * @param ancestors: liste des prédecesseurs
  * @param 
  * @param ordre
@@ -78,17 +78,16 @@ void add_successor(Tasks* taskAnc, Tasks* taskSucc) {
 }
 
 void task_earlier(Tasks* task) {
-    task->earlier = 0
-        for (int i = 0; i < task->ancestorCount; i++) {
-            if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
+    task->earlier = 0;
+    for (int i = 0; i < task->ancestorCount; i++) {
+        if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
             task->earlier = task->ancestors[i]->earlier + task->ancestors[i]->duration;
-            }
         }
-        for (int i = 0; i < task->successorCount; i++) {
-            task_earlier(task->successors[i]);
-        }
-        
     }
+    for (int i = 0; i < task->successorCount; i++) {
+        task_earlier(task->successors[i]);
+    }
+}
 
 
 void task_later(Tasks* task) {
@@ -195,7 +194,7 @@ int main()
     fill_indice(&task1, &task8, &firstTaskIndex, &lastTaskIndex);
     printf("%d %d %d %d %d %d %d %d %d %d\n", task1.index, task2.index, task3.index, task4.index, task5.index, task6.index, task7.index, task8.index, task9.index, task10.index);
     int earlier = 100, later = 100;
-    calculate_earlier_later(&task8, &earlier, &later);
+    //calculate_earlier_later(&task8, &earlier, &later);
     printf("%d %d %d %d %d %d %d %d %d %d\n", task1.earlier, task2.earlier, task3.earlier, task4.earlier, task5.earlier, task6.earlier, task7.earlier, task8.earlier, task9.earlier, task10.earlier);
     printf("%d %d %d %d %d %d %d %d %d %d\n", task1.later, task2.later, task3.later, task4.later, task5.later, task6.later, task7.later, task8.later, task9.later, task10.later);
     return 0;

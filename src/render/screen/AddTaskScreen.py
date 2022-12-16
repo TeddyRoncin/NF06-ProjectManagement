@@ -15,7 +15,7 @@ class AddTaskScreen(Screen):
         self.project = project
         self.new_branch_checkbox = CheckboxWidget((200, 200), "Créer sur une nouvelle branche ?")
         self.new_branch_checkbox.enabled = False
-        self.tree_widget = AddTaskTreeWidget((100, 100), project.beginning_task, self.new_branch_checkbox)
+        self.tree_widget = AddTaskTreeWidget((100, 100), project, self.new_branch_checkbox)
         self.name_widget = EntryWidget((10, 50), (100, 30), (100, 30), 100, False)
         self.error_widget = LabelWidget((10, 10), "")
         self.description_widget = EntryWidget((10, 90), (200, 100), (200, 100), -1, True)

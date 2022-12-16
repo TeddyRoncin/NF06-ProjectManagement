@@ -11,6 +11,7 @@ class Window:
     def __init__(self):
         self.screen = pygame.display.set_mode(flags=pygame.RESIZABLE)
         self.widget_manager = None
+        self.mouse_left_at = (0, 0)
 
     def tick(self):
         if self.widget_manager is None:
@@ -34,10 +35,21 @@ class Window:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit(0)
+            if event.type == pygame.WINDOWLEAVE:
+                self.mouse_left_at = pygame.mouse.get_pos()
+            if event.type == pygame.WINDOWENTER:
+                mouse_pos = pygame.mouse.get_pos()
+                pygame.event.post(pygame.event.Event(
+                    pygame.MOUSEMOTION,
+                    pos=mouse_pos,
+                    rel=(mouse_pos[0] - self.mouse_left_at[0], mouse_pos[1] - self.mouse_left_at[1]),
+                    buttons=pygame.mouse.get_pressed(),
+                ))
             for widget in self.widget_manager.get_widgets():
                 self._process_event_for_widget(event, widget)
 
     def _process_event_for_widget(self, event, widget):
+
         widget.process_event(event)
         for child in widget.get_children():
             self._process_event_for_widget(event, child)

@@ -1,0 +1,42 @@
+{
+  "name": "simple",
+  "description": "couocu c'est simple",
+  "tasks": [
+    {
+      "name": "simple",
+      "description": "",
+      "status": 1,
+      "estimated_time": 0,
+      "upstream": []
+    },
+    {
+      "name": "simple",
+      "description": "",
+      "status": 1,
+      "estimated_time": 0,
+      "upstream": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "coucou",
+      "description": "",
+      "status": 1,
+      "estimated_time": 0,
+      "upstream": [
+        0
+      ]
+    },
+    {
+      "name": "salut",
+      "description": "",
+      "status": 1,
+      "estimated_time": 0,
+      "upstream": [
+        0
+      ]
+    }
+  ]
+
+}

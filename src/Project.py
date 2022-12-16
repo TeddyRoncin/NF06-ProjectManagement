@@ -108,16 +108,15 @@ class Project:
         self.project_task = tasks[1]
         self.beginning_task = tasks[0]
 
-    def add_task(self, name, description, upstream_tasks, create_new_branch):
+    def add_existing_task(self, task, upstream_tasks, create_new_branch):
         """
-        Adds a new task to the project.
-        :param name: The name of the task
-        :param description: The description of the task
-        :param upstream_tasks: The upstream tasks of this task
-        :param create_new_branch: Whether to create the task on a new branch
+        Adds an existing task to the project
+        This task should NOT have downstream or upstream tasks
+        :param task: The task to add to the project
+        :param upstream_tasks: The tasks that should be completed before this task
+        :param create_new_branch: Whether we should create a new branch for this task
         :return: None
         """
-        task = Task(name=name, description=description, id_=self.tasks_count)
         if create_new_branch:
             upstream_task = upstream_tasks.pop()
             downstream_task = upstream_task.downstream_tasks[0]
@@ -178,6 +177,18 @@ class Project:
         self.tasks_count += 1
         # And finally we fix all the indices
         c_functions.fix_indices(self)
+
+    def add_task(self, name, description, upstream_tasks, create_new_branch):
+        """
+        Adds a new task to the project.
+        :param name: The name of the task
+        :param description: The description of the task
+        :param upstream_tasks: The upstream tasks of this task
+        :param create_new_branch: Whether to create the task on a new branch
+        :return: None
+        """
+        task = Task(name=name, description=description, id_=self.tasks_count)
+        self.add_existing_task(task, upstream_tasks, create_new_branch)
 
     def remove_task(self, task):
         """

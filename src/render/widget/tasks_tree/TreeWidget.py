@@ -7,9 +7,10 @@ from render.widget.Widget import Widget
 
 class TreeWidget(Widget):
 
-    def __init__(self, position, first_task):
+    def __init__(self, position, project):
         super().__init__()
-        self.first_task = first_task
+        self.project = project
+        self.first_task = project.beginning_task
         self.position = position
         self.bb = pygame.Rect(position[0], position[1], 500, 500)
         self.size = 0, 0
@@ -44,7 +45,9 @@ class TreeWidget(Widget):
                     self.link_widgets.append(self.generate_tree_link_widget((last_x + self.bb.x, last_y + self.bb.y),
                                                                             (x + self.bb.x, y + self.bb.y),
                                                                             lambda: self.position_offset,
-                                                                            self.get_bb))
+                                                                            self.get_bb,
+                                                                            start,
+                                                                            downstream_task))
                     self.generate_widgets(downstream_task,
                                           x,
                                           y,
@@ -62,7 +65,9 @@ class TreeWidget(Widget):
                                                                             widget.bb.x + widget.bb.width / 2,
                                                                             widget.bb.y + widget.bb.height / 2
                                                                         ),
-                                                                        lambda: self.position_offset, self.get_bb))
+                                                                        lambda: self.position_offset, self.get_bb,
+                                                                        start,
+                                                                        new_start))
                 return
             if len(new_start.upstream_tasks) != 1:
                 x += length_differences_with_others[-1] * 60
@@ -71,14 +76,16 @@ class TreeWidget(Widget):
                 start_height = 20 * (start.max_upstream_tasks_depth - 1) + 40 * start.max_upstream_tasks_depth
                 y += new_start_height/2 - start_height/2
                 length_differences_with_others = length_differences_with_others[:-1]
-            start = new_start
             self.link_widgets.append(self.generate_tree_link_widget((last_x + self.bb.x, last_y + self.bb.y),
                                                                     (x + self.bb.x, y + self.bb.y),
-                                                                    lambda: self.position_offset, self.get_bb))
-            self.task_widgets.append(self.generate_tree_task_widget(start,
+                                                                    lambda: self.position_offset, self.get_bb,
+                                                                    start,
+                                                                    new_start))
+            self.task_widgets.append(self.generate_tree_task_widget(new_start,
                                                                     (x + self.bb.x, y + self.bb.y),
                                                                     lambda: self.position_offset,
                                                                     self.get_bb))
+            start = new_start
 
     def get_children(self):
         yield from self.get_movable_children()
@@ -93,12 +100,12 @@ class TreeWidget(Widget):
     def on_mouse_motion_bb(self, pos, motion, buttons):
         if buttons[pygame.BUTTON_LEFT-1] == 1:
             self.position_offset = (self.position_offset[0] + motion[0], self.position_offset[1] + motion[1])
-            for child in self.get_movable_children():
-                child.update_position_offset(self.position_offset)
+            #for child in self.get_movable_children():
+            #    child.update_position_offset(self.position_offset)
 
     def generate_tree_task_widget(self, task, pos, position_offset, get_bb):
         return TreeTaskWidget(task, pos, position_offset, get_bb)
 
-    def generate_tree_link_widget(self, start, end, position_offset, get_bb):
-        return TreeLinkWidget(start, end, position_offset, get_bb)
+    def generate_tree_link_widget(self, start, end, get_position_offset, get_bb, start_widget, end_widget):
+        return TreeLinkWidget(start, end, get_position_offset, get_bb)
 

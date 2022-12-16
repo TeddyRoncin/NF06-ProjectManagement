@@ -1,7 +1,6 @@
 import pygame
 
 from render.widget.Widget import Widget
-from utils import pygame_utils
 
 
 class GanttTaskWidget(Widget):
@@ -54,5 +53,4 @@ class GanttTaskWidget(Widget):
     def get_bb(self):
         y_offset = self.get_y_offset()
         self.amount_cropped = max(0, self.parent_bb.y - (self.pos[1] - y_offset))
-        return pygame_utils.crop_bb_to_fit(pygame.Rect((self.pos[0], self.pos[1] - y_offset), self.size),
-                                           self.parent_bb)
+        return pygame.Rect((self.pos[0], self.pos[1] - y_offset), self.size).clip(self.parent_bb)

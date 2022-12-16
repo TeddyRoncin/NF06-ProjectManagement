@@ -1,3 +1,4 @@
+from render.screen.ModifyLayoutScreen import ModifyLayoutScreen
 from render.widget.GanttWidget import GanttWidget
 from render.Window import Window
 from render.screen.AddTaskScreen import AddTaskScreen
@@ -16,11 +17,12 @@ class ProjectScreen(Screen):
 
         self.task_information_widget = TaskInformationWidget((100, 500), self.delete_task)
         self.tree_widget = ShowTasksTreeWidget((100, 100),
-                                               project.beginning_task,
+                                               project,
                                                self.task_information_widget.set_task)
         self.add_task_widget = ButtonWidget((500, 500), (30, 15), "Ajouter une tâche", self.on_add_widget)
         self.save_project_widget = ButtonWidget((700, 700), (100, 30), "Sauvegarder le projet", self.project.save)
         self.project_settings_widget = ButtonWidget((700, 750), (100, 30), "Paramètres du projet", self.go_to_settings)
+        self.modify_layout_widget = ButtonWidget((700, 800), (100, 30), "Modifier la disposition", self.modify_layout)
         self.gantt_widget = GanttWidget(project)
 
     def get_widgets(self):
@@ -28,6 +30,7 @@ class ProjectScreen(Screen):
         yield self.add_task_widget
         yield self.save_project_widget
         yield self.project_settings_widget
+        yield self.modify_layout_widget
         if self.tree_widget.selected_task is not None:
             yield self.task_information_widget
         yield self.gantt_widget
@@ -45,6 +48,9 @@ class ProjectScreen(Screen):
     def delete_task(self, task):
         self.project.remove_task(task)
         self.reload()
+
+    def modify_layout(self):
+        Window.instance.set_screen(ModifyLayoutScreen(self.project))
 
 
 
