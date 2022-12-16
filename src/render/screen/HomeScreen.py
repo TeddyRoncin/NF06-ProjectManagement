@@ -6,7 +6,8 @@ from render.screen.CreateProjectScreen import CreateProjectScreen
 from render.screen.ProjectScreen import ProjectScreen
 from render.screen.Screen import Screen
 from render.widget.ButtonWidget import ButtonWidget
-from render.widget.ListWidget import ListWidget
+from render.widget.LabelWidget import LabelWidget
+from render.widget.ProjectListWidget import ProjectListWidget
 
 
 class HomeScreen(Screen):
@@ -26,17 +27,20 @@ class HomeScreen(Screen):
         if projects is None:
             projects = Project.projects
         self.projects = projects
-        self.project_list = ListWidget(pygame.Rect(100, 100, 300, 50),
-                                       [project.name for project in self.projects],
-                                       on_item_clicked=self.on_select_project)
-        self.create_project_button = ButtonWidget((100, 200), (100, 30), "Créer un projet", self.on_create_project)
+        self.label = LabelWidget((0, 30), "Liste des projets", font_size=30, bold=True, color=(0, 0, 0))
+        self.label.bb.left = (1920 - self.label.bb.width) / 2
+        self.project_list = ProjectListWidget(pygame.Rect(460, 100, 1000, 700),
+                                              self.projects,
+                                              on_item_clicked=self.on_select_project)
+        self.create_project_button = ButtonWidget((810, 900), (300, 100), "Créer un projet", self.on_create_project,
+                                                  font_size=30, bold=True)
 
     def get_widgets(self):
         """
         Returns the list of widgets we should be displaying on this frame.
         :return: A generator returning the widgets that should be displayed.
-                 There, the only element in the generator is the widget project_list
         """
+        yield self.label
         yield self.project_list
         yield self.create_project_button
 
@@ -47,16 +51,15 @@ class HomeScreen(Screen):
         :return: None
         """
         self.projects = projects
-        self.project_list.set_items(projects)
+        self.project_list.set_projects(projects)
 
-    def on_select_project(self, project_name):
+    def on_select_project(self, project):
         """
         Callback from self.project_list. It is called when the user clicks on a project
         :param project_name: The name of the project that was clicked
         :return: None
         """
-        Window.instance.set_screen(ProjectScreen(
-            [project for project in self.projects if project.name == project_name][0]))
+        Window.instance.set_screen(ProjectScreen(project))
 
     def on_create_project(self):
         """
