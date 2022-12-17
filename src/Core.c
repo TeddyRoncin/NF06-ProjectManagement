@@ -1,16 +1,10 @@
 /*
  @file Managemnt_projet.c
-
  * @author MedAmine JABOTE & Teddy RONCIN
-
  * @brief gantt_PERT fonctions pour logiciel gestion des projets
-
  * @version 0.1
-
- * @date   25/09/2022
- *
+ * @date  25/09/2022
  * @copyright Copyright (c) 2022
- *
 */
 
 
@@ -18,7 +12,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
+// struct for tasks
 typedef struct Tasks {
     char* name;
     struct Tasks **successors;
@@ -34,16 +28,21 @@ typedef struct Tasks {
     bool isCritical;
 } Tasks;
 /*
-* @brief Application de gantt_pert permet d'effectuer les calculs nécessaires pour gérer des diagrammes de Gantt et PERT
- *
- * @param taskCount: Nombre des tâches.
- * @param Tasks: type de variables tâches .
- * @param succesors: liste des successeurs.
- * @param ancestors: liste des prédecesseurs
- * @param 
- * @param ordre
- * @return Return in python the diagramme de gantt et PERT.
+* @brief Gantt pert application allows you to perform the calculations needed to create Gantt and PERT charts
+ * @param |X|Count: Numbre of X (Example: successorCount: Number of successors ).
+ * @param Tasks: type of task variables.
+ * @param seccesors: list of successors.
+ * @param ancestors: list of predecessors
+ * @param id: id of task.
+ * @param index: index of task.
+ * @param duration: duration of task.
+ * @param earlier: earlier of task.
+ * @param later: later of task.
+ * @param isCritical: isCritical of task.
+ * @return Return in python the diagramme de gantt and PERT.
 */
+
+// function to add an index to a task
 void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* lastTaskIndex)
 {
     firstTask->index = *firstTaskIndex;
@@ -73,11 +72,13 @@ void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* las
 
 }
 
+// function to add a successor to a task
 void add_successor(Tasks* taskAnc, Tasks* taskSucc) {
     taskAnc->successors[(taskAnc->successorCount)++] = taskSucc;
     taskSucc->ancestors[(taskSucc->ancestorCount)++] = taskAnc;
 }
 
+// function to calculate early-Start to each task
 void task_earlier(Tasks* task) {
     task->earlier = 0;
     for (int i = 0; i < task->ancestorCount; i++) {
@@ -90,7 +91,7 @@ void task_earlier(Tasks* task) {
     }
 }
 
-
+// function to calculate late-Start to each task
 void task_later(Tasks* task) {
     if (task->successorCount == 0) {
         task->later = task->earlier;
@@ -108,7 +109,7 @@ void task_later(Tasks* task) {
     }
 }
 
-
+// function to identify critical tasks
 void identify_critical(Tasks* task) {
     if (task->earlier == task->later) {
         task->isCritical = true;
@@ -119,18 +120,6 @@ void identify_critical(Tasks* task) {
      }
     for (int i = 0; i < task->successorCount; i++) {
         identify_critical(task->successors[i]);
-    }
-}
-
-
-
-void Gantt_chart(Tasks* task, int* Gantt, int* ordreCount) {
-    //vérifier si task fait partie de la liste des tâches critiques
-    if (task->earlier == task->later) {
-        Gantt[task->index] = task->id;
-    }
-    for (int i = 0; i < task->successorCount; i++) {
-        Gantt_chart(task->successors[i], Gantt, ordreCount);
     }
 }
 
