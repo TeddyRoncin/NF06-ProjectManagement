@@ -5,8 +5,8 @@ from render.widget.ButtonWidget import ButtonWidget
 
 class ButtonWithConfirmationWidget(ButtonWidget):
 
-    def __init__(self, pos, size, text, on_click):
-        super().__init__(pos, size, text, on_click)
+    def __init__(self, pos, size, text, on_click, font_size=16, bold=False):
+        super().__init__(pos, size, text, on_click, font_size, bold)
         self.last_click = 0
         self.confirmation_surface = self.font.render("Confirmer ?", True, (0, 0, 0))
 
