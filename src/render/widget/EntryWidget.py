@@ -110,7 +110,7 @@ class EntryWidget(Widget):
                 elif self.cursor_position[0] != len(self.content) - 1:
                     self.cursor_position[0] += 1
                     self.cursor_position[1] = 0
-            elif len(self.content) < self.max_chars or self.max_chars == -1:
+            elif sum(len(line) for line in self.content) < self.max_chars or self.max_chars == -1:
                 self.content[self.cursor_position[0]] = \
                     self.content[self.cursor_position[0]][:self.cursor_position[1]] + \
                     event.unicode + \

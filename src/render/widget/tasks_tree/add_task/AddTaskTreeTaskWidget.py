@@ -19,17 +19,12 @@ class AddTaskTreeTaskWidget(TreeTaskWidget):
             self.on_click(self.task, self.selected)
 
     def draw(self, surface):
-        super().draw(surface)
         if self.selected:
-            mask = pygame.Surface(self.bb.size)
-            mask.fill((0, 255, 0))
-            mask.set_alpha(75)
-            surface.blit(mask, (0, 0))
+            self._draw(surface, 0x00ff00)
         elif not self.enabled:
-            mask = pygame.Surface((50, 50))
-            mask.fill((255, 255, 255))
-            mask.set_alpha(75)
-            surface.blit(mask, (0, 0))
+            self._draw(surface, 0xbbbbbb)
+        else:
+            super().draw(surface)
 
     def set_enabled(self):
         self.enabled = self.enableable

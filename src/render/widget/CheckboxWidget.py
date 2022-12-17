@@ -7,7 +7,7 @@ class CheckboxWidget(Widget):
 
     def __init__(self, pos, label, on_value_changed=None):
         super().__init__()
-        self.font = pygame.font.SysFont("Arial", 16)
+        self.font = pygame.font.SysFont("Arial", 20)
         self.on_value_changed = on_value_changed
         label = label.split("\n")
         text_renders = [self.font.render(line, False, (0, 0, 0)) for line in label]

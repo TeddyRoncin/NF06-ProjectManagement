@@ -179,7 +179,7 @@ class Project:
         # And finally we fix all the indices
         c_functions.fix_indices(self)
 
-    def add_task(self, name, description, upstream_tasks, create_new_branch):
+    def add_task(self, name, description, estimated_time, upstream_tasks, create_new_branch):
         """
         Adds a new task to the project.
         :param name: The name of the task
@@ -188,8 +188,9 @@ class Project:
         :param create_new_branch: Whether to create the task on a new branch
         :return: None
         """
-        task = Task(name=name, description=description, id_=self.tasks_count)
+        task = Task(name=name, description=description, estimated_time=estimated_time, id_=self.tasks_count)
         self.add_existing_task(task, upstream_tasks, create_new_branch)
+        self.load()
 
     def remove_task(self, task):
         """
@@ -229,6 +230,7 @@ class Project:
             task.id -= 1
         # And finally we fix all the indices
         c_functions.fix_indices(self)
+        self.load()
 
     def save(self):
         """
