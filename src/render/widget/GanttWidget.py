@@ -7,10 +7,10 @@ from render.widget.Widget import Widget
 
 class GanttWidget(Widget):
 
-    def __init__(self, project):
+    def __init__(self, bb, project):
         super().__init__()
         self.project = project
-        self.bb = pygame.Rect(600, 100, 500, 300)
+        self.bb = bb
         self.scroll_bar = ScrollBarWidget(self.get_bb, lambda: project.tasks_count*50 + 50)
         self.y_offset = 0
         self.task_widgets = []

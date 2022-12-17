@@ -9,6 +9,7 @@ class ButtonWidget(Widget):
         super().__init__()
         self.on_click = on_click
         self.bb = pygame.Rect(pos, size)
+        self.text = text
         self.font = pygame.font.SysFont("Arial", font_size, bold=bold)
         self.surface = self.font.render(text, True, (255, 255, 255))
 
@@ -20,3 +21,11 @@ class ButtonWidget(Widget):
 
     def on_left_click_bb(self, pos):
         self.on_click()
+
+    def rerender(self, font_size=None, bold=None):
+        if font_size is None:
+            font_size = self.font.get_height()
+        if bold is None:
+            bold = self.font.get_bold()
+        self.font = pygame.font.SysFont("Arial", font_size, bold=bold)
+        self.surface = self.font.render(self.text, True, (255, 255, 255))

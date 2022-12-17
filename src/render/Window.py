@@ -29,9 +29,9 @@ class Window:
         render.fill(0xffffff)
         for widget in self.screen.get_widgets():
             self._render_widget(widget, render)
-        pygame.transform.scale(render,
-                               self.real_render_size,
-                               self.window.subsurface(pygame.Rect(self.offsets, self.real_render_size)))
+        pygame.transform.smoothscale(render,
+                                     self.real_render_size,
+                                     self.window.subsurface(pygame.Rect(self.offsets, self.real_render_size)))
         pygame.display.flip()
 
     def _render_widget(self, widget, render):

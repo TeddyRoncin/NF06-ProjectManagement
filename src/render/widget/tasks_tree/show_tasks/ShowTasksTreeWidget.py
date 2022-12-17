@@ -5,8 +5,8 @@ from render.widget.tasks_tree.show_tasks.ShowTasksTreeTaskWidget import ShowTask
 
 class ShowTasksTreeWidget(TreeWidget):
 
-    def __init__(self, position, first_task, on_selection_change):
-        super().__init__(position, first_task)
+    def __init__(self, position, size, first_task, on_selection_change):
+        super().__init__(position, size, first_task)
         self.selected_task = None
         self.on_selection_change = on_selection_change
 

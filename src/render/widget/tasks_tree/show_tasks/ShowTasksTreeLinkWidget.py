@@ -7,7 +7,6 @@ class ShowTasksTreeLinkWidget(TreeLinkWidget):
         super().__init__(from_position, to_position, get_position_offset, get_parent_bb)
         self.from_widget = from_widget
         self.to_widget = to_widget
-        print(self.from_widget.is_critical, self.to_widget.is_critical)
         self.is_critical = self.from_widget.is_critical and self.to_widget.is_critical
 
     def draw(self, surface):

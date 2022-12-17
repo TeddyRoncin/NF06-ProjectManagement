@@ -53,6 +53,7 @@ class ProjectItemWidget(Widget):
         self.actual_bb = self.bb.move(0, -self.get_scroll())
         self.crop_amount = max(0, self.parent_bb.y - self.actual_bb.y)
         self.actual_bb = self.actual_bb.clip(self.parent_bb)
+        print(self.actual_bb)
         return self.actual_bb
 
     def set_position(self, pos):

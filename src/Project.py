@@ -98,7 +98,7 @@ class Project:
             * the project_task (represents the project ending).
         """
         if tasks is None:
-            tasks = [Task(1, name), Task(2, name)]
+            tasks = [Task(0, name), Task(1, name)]
             # We need to link the 2 tasks
             tasks[1].add_upstream_task(tasks[0])
         self.name = name

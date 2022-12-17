@@ -7,12 +7,12 @@ from render.widget.Widget import Widget
 
 class TreeWidget(Widget):
 
-    def __init__(self, position, project):
+    def __init__(self, position, size, project):
         super().__init__()
         self.project = project
         self.first_task = project.beginning_task
         self.position = position
-        self.bb = pygame.Rect(position[0], position[1], 500, 500)
+        self.bb = pygame.Rect(position, size)
         self.size = 0, 0
         self.task_widgets = []
         self.link_widgets = []

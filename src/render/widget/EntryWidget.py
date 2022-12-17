@@ -42,14 +42,14 @@ class EntryWidget(Widget):
         text_surfaces = []
         width = 0
         for text in self.content:
-            text_surface = self.font.render(text, True, pygame.Color(255, 255, 255))
+            text_surface = self.font.render(text, True, pygame.Color(0, 0, 0))
             # The first element is the surface and the second is the y coordinate the text should be drawn to
             text_surfaces.append(text_surface)
             width = max(width, text_surface.get_width() + 4)
         self.total_size = (max(self.min_size[0], width), max(self.min_size[1], len(text_surfaces) * self.font_height))
         self.bb.width = min(self.max_size[0], self.total_size[0])
         self.bb.height = min(self.max_size[1], self.total_size[1])
-        background_color = pygame.Color(150, 150, 150)
+        background_color = pygame.Color(220, 220, 220)
         if self.focus:
             background_color = pygame.Color(200, 200, 200)
         surface.fill(background_color)

@@ -25,9 +25,6 @@ class ProjectListWidget(Widget):
 
     def draw(self, surface):
         surface.fill(pygame.Color(100, 100, 0))
-        """scroll = self.get_scroll_in_pixel()
-        for i, item in enumerate(self.items):
-            surface.blit(self.font.render(item, True, pygame.Color(255, 255, 255)), (0, i * self.item_height - scroll))"""
 
     def on_left_click_bb(self, pos):
         if pos[0] >= self.bb.width - self.scrollbar.bb.width:
@@ -44,21 +41,14 @@ class ProjectListWidget(Widget):
     def set_projects(self, projects):
         self.widgets_per_line = self.bb.width // 320
         self.first_widget_x = (self.bb.width % 320) // 2
-        x = self.first_widget_x
-        y = 10
-        max_height_of_line = 0
+        min_height_index = 0
+        heights_of_lines = [10] * self.widgets_per_line
         for project in projects:
             widget = ProjectItemWidget(project, 300, self.bb, self.get_scroll_in_pixel)
-            if x + widget.bb.width > self.bb.width - 10:
-                x = self.first_widget_x
-                y += max_height_of_line + 10
-            if widget.bb.height > max_height_of_line:
-                max_height_of_line = widget.bb.height
-            widget.set_position((x + self.bb.x, y + self.bb.y))
-            print("adding widget at", (x,y))
+            widget.set_position((min_height_index * 320 + self.first_widget_x + self.bb.x,
+                                 heights_of_lines[min_height_index] + self.bb.y))
+            heights_of_lines[min_height_index] += widget.bb.height + 20
+            for i, height in enumerate(heights_of_lines):
+                if height < heights_of_lines[min_height_index]:
+                    min_height_index = i
             self.items.append(widget)
-            x += widget.bb.width + 10
-            print("adding project " + str(project.name))
-        print(self.items)
-        self.total_height = y + max_height_of_line + 10
-        print(self.total_height)
