@@ -25,45 +25,53 @@ class ModifyLayoutTreeLinkWidget(TreeLinkWidget):
         self.original_to = self.to_position
         self.original_bb = self.line_bb.copy()
         self.dragging = False
+        self.motion = (0, 0)
 
     def on_left_click_bb(self, pos):
         if self.get_distance_from_line(pos) <= 5:
             # If we are already dragging something else, we cannot drag this
             if not self.on_drag():
                 return
-            relative_start, _ = self.get_positions_coords()
+            relative_start, relative_end = self.get_positions_coords()
             start = relative_start[0] + self.bb.x, relative_start[1] + self.bb.y
+            end = relative_end[0] + self.bb.x, relative_end[1] + self.bb.y
             pos_abs = pos[0] + self.bb.x, pos[1] + self.bb.y
             self.line_bb = pygame.Rect(start, (pos_abs[0] - start[0], pos_abs[1] - start[1]))
             self.from_position = self.from_position = (int(self.line_bb.width < 0), int(self.line_bb.height < 0))
             self.to_position = (int(self.line_bb.width > 0), int(self.line_bb.height > 0))
             self.line_bb.normalize()
             self.bb = self.line_bb.inflate(2, 2)
+            self.motion = (pos_abs[0] - end[0], pos_abs[1] - end[1])
             self.dragging = True
 
     def on_left_button_release(self):
         if self.dragging:
             _, end = self.get_positions_coords()
-            self.on_drop(self.from_task, self.to_task, end[0] + self.bb.x, end[1] + self.bb.y)
+            self.on_drop(self.from_task, self.to_task, end[0] + self.actual_bb.x, end[1] + self.actual_bb.y)
             self.dragging = False
             self.line_bb = self.original_bb.copy()
             self.bb = self.line_bb.inflate(2, 2)
             self.from_position = self.original_from
             self.to_position = self.original_to
+            self.motion = (0, 0)
 
     def on_mouse_motion(self, pos, motion, buttons):
         if not self.dragging:
             return
-        if self.from_position[0] < self.to_position[0]:
-            self.line_bb.width += motion[0]
+        self.motion = (self.motion[0] + motion[0], self.motion[1] + motion[1])
+        self.line_bb = self.original_bb.copy()
+        if self.original_from[0] < self.original_to[0]:
+            self.line_bb.width += self.motion[0]
         else:
-            self.line_bb.x += motion[0]
-            self.line_bb.width -= motion[0]
-        if self.from_position[1] < self.to_position[1]:
-            self.line_bb.height += motion[1]
+            self.line_bb.x += self.motion[0]
+            self.line_bb.width -= self.motion[0]
+        if self.original_from[1] < self.original_to[1]:
+            self.line_bb.height += self.motion[1]
         else:
-            self.line_bb.y += motion[1]
-            self.line_bb.height -= motion[1]
+            self.line_bb.y += self.motion[1]
+            self.line_bb.height -= self.motion[1]
+        self.from_position = self.original_from
+        self.to_position = self.original_to
         if self.line_bb.width < 0:
             self.from_position, self.to_position = (self.to_position[0], self.from_position[1]), \
                                                    (self.from_position[0], self.to_position[1])
@@ -75,10 +83,11 @@ class ModifyLayoutTreeLinkWidget(TreeLinkWidget):
 
     def get_bb(self):
         super().get_bb()
-        if not self.dragging:
-            return self.actual_bb
-        self.actual_bb.normalize()
+        #if not self.dragging:
         return self.actual_bb
+        #self.actual_bb.normalize()
+        #print(self.actual_bb)
+        #return self.actual_bb
 
     def get_distance_from_line(self, pos):
         start, end = self.get_positions_coords()

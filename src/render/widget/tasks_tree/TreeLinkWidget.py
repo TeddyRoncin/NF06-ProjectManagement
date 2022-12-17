@@ -14,7 +14,7 @@ class TreeLinkWidget(Widget):
         # Positions are tuple containing 0s or 1s as x and y
         # 0 means left or top, 1 means right or bottom of the bounding box
         self.from_position = (int(from_position[0] > to_position[0]), int(from_position[1] > to_position[1]))
-        self.to_position = (int(from_position[0] < to_position[0]), int(from_position[1] < to_position[1]))
+        self.to_position = (int(from_position[0] <= to_position[0]), int(from_position[1] <= to_position[1]))
         self.actual_bb = self.bb.copy()
         self.get_position_offset = get_position_offset
         self.get_parent_bb = get_parent_bb

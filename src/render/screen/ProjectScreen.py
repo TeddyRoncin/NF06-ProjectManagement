@@ -24,16 +24,16 @@ class ProjectScreen(Screen):
                              ButtonWidget((960, 0), (479, 100), "Diagramme de Gantt (dates au plus tard)",
                                           lambda: self.change_menu(2), font_size=24),
                              ButtonWidget((1440, 0), (479, 100), "Actions", lambda: self.change_menu(3), font_size=24)]
-        self.task_information_widget = TaskInformationWidget((100, 500), self.delete_task)
+        self.task_information_widget = TaskInformationWidget((10, 870), self.delete_task)
         self.tree_widget = ShowTasksTreeWidget((0, 100),
                                                (1920, 980),
                                                project,
                                                self.task_information_widget.set_task)
-        self.go_back_widget = ButtonWidget((20, 120), (150, 70), "Retour", self.on_going_back, font_size=30, bold=True)
         self.add_task_widget = ButtonWidget((710, 200), (500, 100), "Ajouter une tâche", self.on_add_widget, font_size=30, bold=True)
         self.modify_layout_widget = ButtonWidget((710, 310), (500, 100), "Modifier la disposition", self.modify_layout, font_size=30, bold=True)
         self.project_settings_widget = ButtonWidget((710, 420), (500, 100), "Paramètres du projet", self.go_to_settings, font_size=30, bold=True)
         self.save_project_widget = ButtonWidget((710, 530), (500, 100), "Sauvegarder le projet", self.project.save, font_size=30, bold=True)
+        self.go_back_widget = ButtonWidget((710, 640), (500, 100), "Fermer le projet", self.on_close_project, font_size=30, bold=True)
         self.earliest_gantt_widget = GanttWidget(pygame.Rect(0, 100, 1920, 980), project, True)
         self.latest_gantt_widget = GanttWidget(pygame.Rect(0, 100, 1920, 980), project, False)
 
@@ -70,14 +70,14 @@ class ProjectScreen(Screen):
         self.reload()
 
     def modify_layout(self):
-        Window.instance.set_screen(ModifyLayoutScreen(self.project))
+        Window.instance.set_screen(ModifyLayoutScreen(self.project, self))
 
     def change_menu(self, menu):
         self.menu = menu
         for i, btn in enumerate(self.menu_buttons):
             btn.rerender(bold=(i == self.menu))
 
-    def on_going_back(self):
+    def on_close_project(self):
         from render.screen.HomeScreen import HomeScreen
         Window.instance.set_screen(HomeScreen())
 

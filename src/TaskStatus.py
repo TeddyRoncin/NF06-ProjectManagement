@@ -20,5 +20,8 @@ class TaskStatus(IntEnum):
             return "En vérification"
         return "Terminée"
 
+    def next_status(self):
+        return TaskStatus(self.value + 1)
+
 
 __all__ = [TaskStatus]

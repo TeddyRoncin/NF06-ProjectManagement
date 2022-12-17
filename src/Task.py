@@ -30,8 +30,11 @@ class Task:
     def update_status(self):
         self.status += 1
 
-    def add_upstream_task(self, task):
-        self.upstream_tasks.append(task)
+    def add_upstream_task(self, task, index=None):
+        if index is None:
+            self.upstream_tasks.append(task)
+        else:
+            self.upstream_tasks.insert(index, task)
         task.downstream_tasks.append(self)
         self.update_upstream_info()
         task.update_downstream_info()

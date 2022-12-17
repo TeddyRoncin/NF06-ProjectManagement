@@ -5,8 +5,8 @@ from render.widget.tasks_tree.modify_layout.ModifyLayoutTreeTaskWidget import Mo
 
 class ModifyLayoutTreeWidget(TreeWidget):
 
-    def __init__(self, position, task):
-        super().__init__(position, (500, 500), task)
+    def __init__(self, position, size, task):
+        super().__init__(position, size, task)
         self.can_drag = True
 
     def generate_tree_task_widget(self, task, pos, position_offset, get_bb, get_scale):
@@ -27,22 +27,20 @@ class ModifyLayoutTreeWidget(TreeWidget):
         for widget in self.task_widgets:
             bb = widget.get_bb()
             widget_pos = bb.x + bb.width / 2, bb.y + bb.height / 2
-            if (x - widget_pos[0]) ** 2 + (y - widget_pos[1]) ** 2 < 100:
+            if (x - widget_pos[0]) ** 2 + (y - widget_pos[1]) ** 2 < 50*50:
                 downstream_task = widget.task
         # If we didn't click anywhere, there is nothing to do
         if downstream_task is None:
             return
         # We can't move a link that is before an intersection
-        if len(from_task.downstream_tasks) > 1 or len(to_task.upstream_tasks) > 1:
+        if len(from_task.downstream_tasks) > 1 or len(to_task.upstream_tasks) > 2:
             return
         # We can't move a link if from_task isn't the end of a branch
         if len(to_task.upstream_tasks) < 2:
             return
-        # We cannot make the downstream task of the task a "more downstream" task than the last
-        # (by default it will be the "most downstream" possible)
-        # What's more, there must be at least 1 task that is "jumped" by the branch
-        """if from_task.downstream_tasks[0].downstream_tasks_count >= downstream_task.downstream_tasks_count:
-            return"""
+        # We can't move a link if the new downstream task is after an intersection
+        if len(downstream_task.upstream_tasks) > 1:
+            return
         # We now need to verify that both tasks are on the same branch and at the same depth
         # For that, we just go upstream from the old downstream tasks into the tree,
         # and try to find the new downstream task
@@ -78,7 +76,19 @@ class ModifyLayoutTreeWidget(TreeWidget):
         downstream_tasks = list(from_task.downstream_tasks)
         for task in downstream_tasks:
             task.remove_upstream_task(from_task)
-        downstream_task.add_upstream_task(from_task)
+        # We need to know at which position the task should be inserted as an upstream task
+        depth = 1
+        last_task = None
+        current_task = from_task
+        while depth > 0:
+            if len(current_task.upstream_tasks) > 1:
+                depth += 1
+            last_task = current_task
+            current_task = current_task.upstream_tasks[0]
+            if len(current_task.downstream_tasks) > 1:
+                depth -= 1
+        # We can now insert the task at the right position
+        downstream_task.add_upstream_task(from_task, current_task.downstream_tasks.index(last_task))
         self.reload()
 
     def on_mouse_motion_bb(self, pos, motion, buttons):

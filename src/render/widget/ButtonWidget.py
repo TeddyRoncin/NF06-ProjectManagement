@@ -22,7 +22,9 @@ class ButtonWidget(Widget):
     def on_left_click_bb(self, pos):
         self.on_click()
 
-    def rerender(self, font_size=None, bold=None):
+    def rerender(self, text=None, font_size=None, bold=None):
+        if text is not None:
+            self.text = text
         if font_size is None:
             font_size = self.font.get_height()
         if bold is None:

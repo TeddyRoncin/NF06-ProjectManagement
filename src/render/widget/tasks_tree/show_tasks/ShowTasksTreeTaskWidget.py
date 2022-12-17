@@ -12,7 +12,7 @@ class ShowTasksTreeTaskWidget(TreeTaskWidget):
 
     def draw(self, surface):
         if self.get_selected_task() == self.task:
-            self._draw(surface, circle_color=pygame.Color(0, 0, 255))
+            self._draw(surface, circle_color=0xbbbbbb)
         else:
             super().draw(surface)
 

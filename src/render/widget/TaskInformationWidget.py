@@ -1,5 +1,6 @@
 import pygame
 
+from TaskStatus import TaskStatus
 from render.widget.ButtonWithConfirmationWidget import ButtonWithConfirmationWidget
 from render.widget.Widget import Widget
 
@@ -8,14 +9,22 @@ class TaskInformationWidget(Widget):
 
     def __init__(self, pos, on_delete_task):
         super().__init__()
-        self.bb = pygame.Rect(pos, (600, 200))
+        self.bb = pygame.Rect(pos, (1900, 200))
         self.task = None
         self.font = pygame.font.SysFont("Arial", 20)
         self.render = None
         self.can_delete = True
-        self.delete_button = ButtonWithConfirmationWidget((self.bb.x + 300, self.bb.y + 10), (100, 50), "Supprimer", lambda: on_delete_task(self.task))
+        self.can_change_status = False
+        self.change_status_button = ButtonWithConfirmationWidget((self.bb.x + 1590, self.bb.y + 10),
+                                                                 (300, 80),
+                                                                 "Prochain statut : (Vide)",
+                                                                 self.update_status,
+                                                                 font_size=20)
+        self.delete_button = ButtonWithConfirmationWidget((self.bb.x + 1590, self.bb.y + 100), (300, 80), "Supprimer", lambda: on_delete_task(self.task), font_size=30)
 
     def get_children(self):
+        if self.task is not None and self.can_change_status:
+            yield self.change_status_button
         if self.task is not None and self.can_delete:
             yield self.delete_button
 
@@ -25,9 +34,7 @@ class TaskInformationWidget(Widget):
         surface.blit(self.render, (0, 0))
 
     def generate_render(self):
-        if self.task is None:
-            return
-        self.render = pygame.Surface((600, 200))
+        self.render = pygame.Surface((1900, 200))
         self.render.fill((255, 255, 255))
         self.render.blit(self.font.render(self.task.name, True, (0, 0, 0)), (3, 3))
         self.render.blit(self.font.render(self.task.description, True, (0, 0, 0)), (3, 23))
@@ -38,11 +45,21 @@ class TaskInformationWidget(Widget):
         self.render.blit(self.font.render("Statut : " + str(self.task.status), True, (0, 0, 0)), (3, 123))
         self.render.blit(self.font.render("Id de la tâche : " + str(self.task.id), True, (0, 0, 0)), (3, 143))
 
+    def update_status(self):
+        self.task.status = self.task.status.next_status()
+        self.change_status_button.rerender(text="Prochain statut : " + str(self.task.status))
+        self.generate_render()
+        if self.task.status == TaskStatus.FINISHED:
+            for task in self.task.downstream_tasks:
+                task.status = TaskStatus.NOT_STARTED
+            self.can_change_status = False
+
     def set_task(self, task):
         self.task = task
-        self.generate_render()
         if self.task is None:
             return
+        self.change_status_button.rerender(text="Prochain statut : " + str(self.task.status))
+        self.generate_render()
         if self.task.is_beginning_task:
             self.can_delete = False
         elif self.task.is_project_task:
@@ -53,4 +70,10 @@ class TaskInformationWidget(Widget):
             self.can_delete = False
         else:
             self.can_delete = True
+        if self.task.status == TaskStatus.FINISHED:
+            self.can_change_status = False
+        elif self.task.status == TaskStatus.LOCKED:
+            self.can_change_status = False
+        else:
+            self.can_change_status = True
 
