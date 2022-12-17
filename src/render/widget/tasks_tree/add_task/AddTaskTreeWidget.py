@@ -12,8 +12,8 @@ class AddTaskTreeWidget(TreeWidget):
     def get_children(self):
         yield from super().get_children()
 
-    def generate_tree_task_widget(self, task, pos, position_offset, get_bb):
-        return AddTaskTreeTaskWidget(task, pos, position_offset, get_bb, self.on_task_clicked)
+    def generate_tree_task_widget(self, task, pos, position_offset, get_bb, get_scale):
+        return AddTaskTreeTaskWidget(task, pos, position_offset, get_bb, self.on_task_clicked, get_scale)
 
     def on_task_clicked(self, task, selected):
         if selected:

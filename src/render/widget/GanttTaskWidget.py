@@ -13,9 +13,10 @@ class GanttTaskWidget(Widget):
               (0xff00ff, 0x880088),
               ]
 
-    def __init__(self, task, total_time, parent_bb, get_y_offset):
+    def __init__(self, task, is_earliest_graph, total_time, parent_bb, get_y_offset):
         super().__init__()
         self.task = task
+        self.is_earliest_graph = is_earliest_graph
         self.total_time = total_time
         self.parent_bb = parent_bb
         self.get_y_offset = get_y_offset
@@ -39,11 +40,13 @@ class GanttTaskWidget(Widget):
                              self.colors[0],
                              pygame.Rect((100, 3 - self.amount_cropped), self.timeline_size))
         else:
+            start = self.task.earliest_start if self.is_earliest_graph else self.task.latest_start
+            end = start + self.task.estimated_time
             pygame.draw.rect(surface,
                              self.colors[0],
-                             pygame.Rect(100 + self.task.earliest_start / self.total_time * self.timeline_size[0],
+                             pygame.Rect(100 + start / self.total_time * self.timeline_size[0],
                                          3 - self.amount_cropped,
-                                         (self.task.latest_start - self.task.earliest_start
+                                         (end - start
                                           + self.task.estimated_time) / self.total_time * self.timeline_size[0],
                                          self.timeline_size[1]))
 

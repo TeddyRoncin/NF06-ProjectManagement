@@ -3,8 +3,8 @@ from render.widget.tasks_tree.TreeTaskWidget import TreeTaskWidget
 
 class ModifyLayoutTreeTaskWidget(TreeTaskWidget):
 
-    def __init__(self, task, position, get_position_offset, get_parent_bb, on_drag, on_drop):
-        super().__init__(task, position, get_position_offset, get_parent_bb)
+    def __init__(self, task, position, get_position_offset, get_parent_bb, on_drag, on_drop, get_scale):
+        super().__init__(task, position, get_position_offset, get_parent_bb, get_scale)
         self.on_drag = on_drag
         self.on_drop = on_drop
         self.is_dragging = False

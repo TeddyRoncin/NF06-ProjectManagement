@@ -5,8 +5,8 @@ from render.widget.tasks_tree.TreeTaskWidget import TreeTaskWidget
 
 class AddTaskTreeTaskWidget(TreeTaskWidget):
 
-    def __init__(self, task, position, get_position_offset, get_parent_bb, on_click):
-        super().__init__(task, position, get_position_offset, get_parent_bb)
+    def __init__(self, task, position, get_position_offset, get_parent_bb, on_click, get_scale):
+        super().__init__(task, position, get_position_offset, get_parent_bb, get_scale)
         self.selected = False
         self.on_click = on_click
         # Is this task possible to enable ? The last task should not be, every other one should

@@ -5,8 +5,8 @@ from render.widget.tasks_tree.TreeTaskWidget import TreeTaskWidget
 
 class ShowTasksTreeTaskWidget(TreeTaskWidget):
 
-    def __init__(self, task, position, get_position_offset, get_parent_bb, on_click, get_selected_task):
-        super().__init__(task, position, get_position_offset, get_parent_bb)
+    def __init__(self, task, position, get_position_offset, get_parent_bb, on_click, get_selected_task, get_scale):
+        super().__init__(task, position, get_position_offset, get_parent_bb, get_scale)
         self.on_click = on_click
         self.get_selected_task = get_selected_task
 

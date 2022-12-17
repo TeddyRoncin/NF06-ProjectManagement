@@ -18,29 +18,35 @@ class TreeWidget(Widget):
         self.link_widgets = []
         self.reload()
         self.position_offset = (0, 0)
+        self.scale_factor = 1
+        # The scale center is relative to the center of the widget
+        #self.scale_center = (0, 0)
+        #self.scale_center = (self.size[0] / 2, self.size[1] / 2)
+        self.scale_center = (960, 540)
 
     def reload(self):
-        self.size = (self.first_task.downstream_tasks_count * 20,
-                     20 * (self.first_task.max_downstream_tasks_depth - 1) +
-                     40 * self.first_task.max_downstream_tasks_depth)
+        self.size = (self.first_task.downstream_tasks_count * 50,
+                     50 * (self.first_task.max_downstream_tasks_depth - 1) +
+                     100 * self.first_task.max_downstream_tasks_depth)
         self.task_widgets.clear()
         self.link_widgets.clear()
-        self.generate_widgets(self.first_task, 20, self.size[1] / 2)
+        self.generate_widgets(self.first_task, 50, self.size[1] / 2)
 
     def generate_widgets(self, start, x, y, length_differences_with_others=()):
         self.task_widgets.append(self.generate_tree_task_widget(start,
                                                                 (x + self.bb.x, y + self.bb.y),
                                                                 lambda: self.position_offset,
-                                                                self.get_bb))
+                                                                self.get_bb,
+                                                                lambda: (self.scale_factor, self.scale_center)))
         while len(start.downstream_tasks):
             last_x = x
             last_y = y
-            x += 60
+            x += 150
             if len(start.downstream_tasks) != 1:
-                y -= (20 * (start.max_downstream_tasks_depth - 1) + 40 * start.max_downstream_tasks_depth) / 2
+                y -= (50 * (start.max_downstream_tasks_depth - 1) + 100 * start.max_downstream_tasks_depth) / 2
                 for downstream_task in start.downstream_tasks:
-                    y_increase = (20 * (downstream_task.max_downstream_tasks_depth - 1) +
-                                  40 * downstream_task.max_downstream_tasks_depth) / 2
+                    y_increase = (50 * (downstream_task.max_downstream_tasks_depth - 1) +
+                                  100 * downstream_task.max_downstream_tasks_depth) / 2
                     y += y_increase
                     self.link_widgets.append(self.generate_tree_link_widget((last_x + self.bb.x, last_y + self.bb.y),
                                                                             (x + self.bb.x, y + self.bb.y),
@@ -55,7 +61,7 @@ class TreeWidget(Widget):
                                               *length_differences_with_others,
                                               start.downstream_tasks_count - 1 - downstream_task.downstream_tasks_count)
                                           )
-                    y += y_increase + 20
+                    y += y_increase + 50
                 return
             new_start = start.downstream_tasks[0]
             if new_start.upstream_tasks[0] != start:
@@ -71,9 +77,9 @@ class TreeWidget(Widget):
                 return
             if len(new_start.upstream_tasks) != 1:
                 x += length_differences_with_others[-1] * 60
-                new_start_height = 20 * (new_start.max_upstream_tasks_depth - 1) + \
-                                   40 * new_start.max_upstream_tasks_depth
-                start_height = 20 * (start.max_upstream_tasks_depth - 1) + 40 * start.max_upstream_tasks_depth
+                new_start_height = 50 * (new_start.max_upstream_tasks_depth - 1) + \
+                                   100 * new_start.max_upstream_tasks_depth
+                start_height = 50 * (start.max_upstream_tasks_depth - 1) + 100 * start.max_upstream_tasks_depth
                 y += new_start_height/2 - start_height/2
                 length_differences_with_others = length_differences_with_others[:-1]
             self.link_widgets.append(self.generate_tree_link_widget((last_x + self.bb.x, last_y + self.bb.y),
@@ -84,7 +90,8 @@ class TreeWidget(Widget):
             self.task_widgets.append(self.generate_tree_task_widget(new_start,
                                                                     (x + self.bb.x, y + self.bb.y),
                                                                     lambda: self.position_offset,
-                                                                    self.get_bb))
+                                                                    self.get_bb,
+                                                                    lambda: (self.scale_factor, self.scale_center)))
             start = new_start
 
     def get_children(self):
@@ -99,12 +106,24 @@ class TreeWidget(Widget):
 
     def on_mouse_motion_bb(self, pos, motion, buttons):
         if buttons[pygame.BUTTON_LEFT-1] == 1:
+            #self.position_offset = (self.position_offset[0] + motion[0]/self.scale_factor, self.position_offset[1] + motion[1]/self.scale_factor)
             self.position_offset = (self.position_offset[0] + motion[0], self.position_offset[1] + motion[1])
-            #for child in self.get_movable_children():
-            #    child.update_position_offset(self.position_offset)
+    def on_scroll_down(self):
+        mouse_pos = pygame.mouse.get_pos()
+        if self.bb.collidepoint(mouse_pos) and self.scale_factor > 0.2:
+            self.scale_center = (self.scale_center[0] + (mouse_pos[0]-self.scale_center[0]) / self.scale_factor,
+                                 self.scale_center[1] + (mouse_pos[1]-self.scale_center[1]) / self.scale_factor)
+            self.scale_factor -= 0.1
 
-    def generate_tree_task_widget(self, task, pos, position_offset, get_bb):
-        return TreeTaskWidget(task, pos, position_offset, get_bb)
+    def on_scroll_up(self):
+        mouse_pos = pygame.mouse.get_pos()
+        if self.bb.collidepoint(mouse_pos) and self.scale_factor < 4:
+            self.scale_center = (self.scale_center[0] + (mouse_pos[0]-self.scale_center[0]) / self.scale_factor,
+                                 self.scale_center[1] + (mouse_pos[1]-self.scale_center[1]) / self.scale_factor)
+            self.scale_factor += 0.1
+
+    def generate_tree_task_widget(self, task, pos, position_offset, get_bb, get_scale):
+        return TreeTaskWidget(task, pos, position_offset, get_bb, get_scale)
 
     def generate_tree_link_widget(self, start, end, get_position_offset, get_bb, start_widget, end_widget):
         return TreeLinkWidget(start, end, get_position_offset, get_bb)
