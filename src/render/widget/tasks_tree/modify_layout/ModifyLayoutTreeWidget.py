@@ -6,7 +6,7 @@ from render.widget.tasks_tree.modify_layout.ModifyLayoutTreeTaskWidget import Mo
 class ModifyLayoutTreeWidget(TreeWidget):
 
     def __init__(self, position, task):
-        super().__init__(position, task)
+        super().__init__(position, (500, 500), task)
         self.can_drag = True
 
     def generate_tree_task_widget(self, task, pos, position_offset, get_bb):

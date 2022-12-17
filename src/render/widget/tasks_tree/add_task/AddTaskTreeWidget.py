@@ -5,7 +5,7 @@ from render.widget.tasks_tree.add_task.AddTaskTreeTaskWidget import AddTaskTreeT
 class AddTaskTreeWidget(TreeWidget):
 
     def __init__(self, pos, first_task, new_branch_checkbox):
-        super().__init__(pos, first_task)
+        super().__init__(pos, (500, 500), first_task)
         self.new_branch_checkbox = new_branch_checkbox
         self.selected_tasks = set()
 
