@@ -7,7 +7,31 @@ from render.widget.Widget import Widget
 
 class TreeTaskWidget(Widget):
 
+    """
+    This class is a base class, it provides tools to create specialized TreeTaskWidgets.
+    It contains general utility features and a default definition of the methods.
+
+    Represents a Task in the tree representation of the project. It is a child Widget of the TreeWidget.
+
+    These are the fields of a TreeTaskWidget :
+    - task : The Task it represents.
+    - actual_bb : The actual bounding box of the widget, taking into account the zoom (not implemented yet),
+                  the position offset, and the parent bounding box. This value is updated at each frame.
+                  It is mostly used to avoid doing too many computations when it is not needed.
+    - get_position_offset : A function that returns the amount the parent Widget was dragged by the user.
+    - get_parent_bb : A function that returns the bounding box of the parent Widget.
+    - get_scale : A function that returns the scale factor and the scale center of the parent Widget, in a tuple.
+    """
+
     def __init__(self, task, position, get_position_offset, get_parent_bb, get_scale):
+        """
+        Creates a new TreeTaskWidget
+        :param task: The Task it represents
+        :param position: The absolute position of the Widget
+        :param get_position_offset: A function that returns the amount the parent Widget was dragged by the user
+        :param get_parent_bb: A function that returns the bounding box of the parent Widget
+        :param get_scale: A function that returns the scale factor and the scale center of the parent Widget, in a tuple
+        """
         super().__init__()
         self.task = task
         self.bb = pygame.Rect(position[0] - 50, position[1] - 50, 100, 100)
@@ -18,9 +42,24 @@ class TreeTaskWidget(Widget):
         self.get_scale = get_scale
 
     def draw(self, surface):
+        """
+        Draws the widget on the given surface. It should be called at each frame.
+        This is the default implementation, it draws a white circle.
+        The surface should be a subsurface of the Window at positions contained by self.actual_bb
+        :param surface: The surface to draw on
+        :return: None
+        """
         self._draw(surface, circle_color=0xffffff)
 
     def _draw(self, surface, circle_color):
+        """
+        Draws the widget on the given surface. It should be called at each frame.
+        This is a general implementation, it draws a circle.
+        The surface should be a subsurface of the Window at positions contained by self.actual_bb
+        :param surface: The surface to draw on
+        :param circle_color: The color of the circle
+        :return: None
+        """
         offset = [0, 0]
         parent_bb = self.get_parent_bb()
         #radius = self.get_scale()[0] * 20
@@ -40,6 +79,11 @@ class TreeTaskWidget(Widget):
                                     radius - name_surface.get_height()/2 + offset[1]))
 
     def get_bb(self):
+        """
+        Returns the bounding box of the widget, in absolute coordinates.
+        It computes the actualized value of self.actual_bb and returns it
+        :return: The Rect the widget should be drawn at, in absolute coordinates
+        """
         # TODO : implement zooming
         scale_factor, scale_center = self.get_scale()
         self.actual_bb = self.bb.copy()

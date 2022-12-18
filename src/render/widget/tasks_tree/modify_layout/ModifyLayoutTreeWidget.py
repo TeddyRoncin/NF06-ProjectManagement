@@ -9,11 +9,11 @@ class ModifyLayoutTreeWidget(TreeWidget):
         super().__init__(position, size, task)
         self.can_drag = True
 
-    def generate_tree_task_widget(self, task, pos, position_offset, get_bb, get_scale):
-        return ModifyLayoutTreeTaskWidget(task, pos, position_offset, get_bb, self.on_drag, self.on_tree_changing, get_scale)
+    def generate_tree_task_widget(self, task, pos, get_position_offset, get_bb, get_scale):
+        return ModifyLayoutTreeTaskWidget(task, pos, get_position_offset, get_bb, self.on_drag, self.on_tree_changing, get_scale)
 
-    def generate_tree_link_widget(self, start, end, get_position_offset, get_bb, start_widget, end_widget):
-        return ModifyLayoutTreeLinkWidget(start, end, start_widget, end_widget, get_position_offset, get_bb, self.on_drag, self.on_tree_changing)
+    def generate_tree_link_widget(self, start, end, get_position_offset, get_bb, from_task, to_task):
+        return ModifyLayoutTreeLinkWidget(start, end, from_task, to_task, get_position_offset, get_bb, self.on_drag, self.on_tree_changing)
 
     def on_drag(self):
         if not self.can_drag:
