@@ -24,7 +24,6 @@ typedef struct Tasks {
     int duration;
     int earlier;
     int later;
-    int marge;
     bool isCritical;
 } Tasks;
 /*
@@ -45,15 +44,17 @@ typedef struct Tasks {
 // function to add an index to a task
 void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* lastTaskIndex)
 {
+    // we add the index to the first task
     firstTask->index = *firstTaskIndex;
     (*firstTaskIndex)++;
+    // we check if the first task is the same as the last task
     while (firstTask->successorCount == 1 && lastTask->id != firstTask->id) 
     {
         firstTask = firstTask->successors[0];
         firstTask->index = *firstTaskIndex;
         (*firstTaskIndex)++;
     }
-
+    // we check if the last task is the same as the first task
     if (lastTask->id == firstTask->id) {
         return;
     }
@@ -65,7 +66,7 @@ void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* las
         lastTask->index = *lastTaskIndex;
         (*lastTaskIndex)--;
     }
-
+    // we call the function recursively for the successors
     for (int i = 0; i < firstTask->successorCount; i++) {
         fill_indice(firstTask->successors[i], lastTask->ancestors[i], firstTaskIndex, lastTaskIndex);
     }
@@ -74,36 +75,44 @@ void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* las
 
 // function to add a successor to a task
 void add_successor(Tasks* taskAnc, Tasks* taskSucc) {
+    // we add the successor to the list of successors of the task
     taskAnc->successors[(taskAnc->successorCount)++] = taskSucc;
     taskSucc->ancestors[(taskSucc->ancestorCount)++] = taskAnc;
 }
 
 // function to calculate early-Start to each task
 void task_earlier(Tasks* task) {
-    task->earlier = 0;
-    for (int i = 0; i < task->ancestorCount; i++) {
-        if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
+    task->earlier = 0
+        for (int i = 0; i < task->ancestorCount; i++) {
+            //  we calculate the earliest start of the task by adding the duration of the predecessors to the earliest start of the predecessors
+            if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
             task->earlier = task->ancestors[i]->earlier + task->ancestors[i]->duration;
+            }
         }
-    }
-    for (int i = 0; i < task->successorCount; i++) {
-        task_earlier(task->successors[i]);
-    }
+        // we call the function recursively for the successors
+        for (int i = 0; i < task->successorCount; i++) {
+            task_earlier(task->successors[i]);
+        }
+        
 }
 
 // function to calculate late-Start to each task
 void task_later(Tasks* task) {
+    // we check if the task is the last task
     if (task->successorCount == 0) {
         task->later = task->earlier;
     }
+    // we calculate the latest start of the task by subtracting the duration of the task to the earliest start of the successors 
     else {
         task->later = task->successors[0]->later - task->duration;
+        // we check if the latest start of the task is greater than the latest start of the successors
         for (int i = 1; i < task->successorCount; i++) {
             if (task->later > task->successors[i]->later - task->duration) {
                 task->later = task->successors[i]->later - task->duration;
             }
         }
     }
+    // we call the function recursively for the predecessors
     for (int i = 0; i < task->ancestorCount; i++) {
         task_later(task->ancestors[i]);
     }
@@ -111,19 +120,17 @@ void task_later(Tasks* task) {
 
 // function to identify critical tasks
 void identify_critical(Tasks* task) {
+    // we check if the earliest start of the task is equal to the latest start of the task
     if (task->earlier == task->later) {
         task->isCritical = true;
     }
- else
-     {
-       task->isCritical = false;
-     }
+    // we call the function recursively for the successors
     for (int i = 0; i < task->successorCount; i++) {
         identify_critical(task->successors[i]);
     }
 }
 
-
+// Test
 int main()
 {
     Tasks* taskSucc1[1];
@@ -146,16 +153,16 @@ int main()
     Tasks* taskAnc8[1];
     Tasks* taskAnc9[1];
     Tasks* taskAnc10[1];
-    Tasks task1 = {.id=1, .successors=taskSucc1, .ancestors=taskAnc1, .duration=10};
-    Tasks task2 = {.id=2, .successors=taskSucc2, .ancestors=taskAnc2, .duration=10};
-    Tasks task3 = {.id=3, .successors=taskSucc3, .ancestors=taskAnc3, .duration=10};
-    Tasks task4 = {.id=4, .successors=taskSucc4, .ancestors=taskAnc4, .duration=10};
-    Tasks task5 = {.id=5, .successors=taskSucc5, .ancestors=taskAnc5, .duration=10};
-    Tasks task6 = {.id=6, .successors=taskSucc6, .ancestors=taskAnc6, .duration=10};
-    Tasks task7 = {.id=7, .successors=taskSucc7, .ancestors=taskAnc7, .duration=10};
-    Tasks task8 = {.id=8, .successors=taskSucc8, .ancestors=taskAnc8, .duration=10};
-    Tasks task9 = {.id=9, .successors=taskSucc9, .ancestors=taskAnc9, .duration=10};
-    Tasks task10 = {.id=10, .successors=taskSucc10, .ancestors=taskAnc10, .duration=10};
+    Tasks task1 = {.id=1, .successors=taskSucc1, .ancestors=taskAnc1};
+    Tasks task2 = {.id=2, .successors=taskSucc2, .ancestors=taskAnc2};
+    Tasks task3 = {.id=3, .successors=taskSucc3, .ancestors=taskAnc3};
+    Tasks task4 = {.id=4, .successors=taskSucc4, .ancestors=taskAnc4};
+    Tasks task5 = {.id=5, .successors=taskSucc5, .ancestors=taskAnc5};
+    Tasks task6 = {.id=6, .successors=taskSucc6, .ancestors=taskAnc6};
+    Tasks task7 = {.id=7, .successors=taskSucc7, .ancestors=taskAnc7};
+    Tasks task8 = {.id=8, .successors=taskSucc8, .ancestors=taskAnc8};
+    Tasks task9 = {.id=9, .successors=taskSucc9, .ancestors=taskAnc9};
+    Tasks task10 = {.id=10, .successors=taskSucc10, .ancestors=taskAnc10};
     
     add_successor(&task1, &task2);
     add_successor(&task2, &task3);
@@ -171,10 +178,7 @@ int main()
     
     int firstTaskIndex = 0, lastTaskIndex = 9;
     fill_indice(&task1, &task8, &firstTaskIndex, &lastTaskIndex);
-    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.index, task2.index, task3.index, task4.index, task5.index, task6.index, task7.index, task8.index, task9.index, task10.index);
-    int earlier = 100, later = 100;
-    //calculate_earlier_later(&task8, &earlier, &later);
-    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.earlier, task2.earlier, task3.earlier, task4.earlier, task5.earlier, task6.earlier, task7.earlier, task8.earlier, task9.earlier, task10.earlier);
-    printf("%d %d %d %d %d %d %d %d %d %d\n", task1.later, task2.later, task3.later, task4.later, task5.later, task6.later, task7.later, task8.later, task9.later, task10.later);
+    printf("%d %d %d %d %d %d %d %d %d %d", task1.index, task2.index, task3.index, task4.index, task5.index, task6.index, task7.index, task8.index, task9.index, task10.index);
+    
     return 0;
 }
