@@ -118,6 +118,7 @@ class ProjectScreen(Screen):
         :return: None
         """
         self.project.remove_task(self.tree_widget.selected_task)
+        self.task_information_widget.set_task(None)
         self.reload()
 
     def modify_layout(self):

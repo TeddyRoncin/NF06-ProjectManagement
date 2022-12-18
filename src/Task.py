@@ -28,7 +28,7 @@ class Task:
         self.update_downstream_info()
 
     def update_status(self):
-        self.status += 1
+        self.status = self.status.next_status()
 
     def add_upstream_task(self, task, index=None):
         if index is None:

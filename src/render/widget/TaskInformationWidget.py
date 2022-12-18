@@ -46,12 +46,13 @@ class TaskInformationWidget(Widget):
         self.render.blit(self.font.render("Id de la tâche : " + str(self.task.id), True, (0, 0, 0)), (3, 143))
 
     def update_status(self):
-        self.task.status = self.task.status.next_status()
+        self.task.update_status()
         self.change_status_button.rerender(text="Prochain statut : " + str(self.task.status))
         self.generate_render()
         if self.task.status == TaskStatus.FINISHED:
             for task in self.task.downstream_tasks:
-                task.status = TaskStatus.NOT_STARTED
+                if sum(t.status == TaskStatus.FINISHED for t in task.upstream_tasks) == len(task.upstream_tasks):
+                    task.status = TaskStatus.NOT_STARTED
             self.can_change_status = False
 
     def set_task(self, task):
@@ -76,4 +77,3 @@ class TaskInformationWidget(Widget):
             self.can_change_status = False
         else:
             self.can_change_status = True
-

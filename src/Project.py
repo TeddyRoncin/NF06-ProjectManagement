@@ -219,7 +219,22 @@ class Project:
                 downstream_task.add_upstream_task(task.upstream_tasks[0])
             task.remove_upstream_task(task.upstream_tasks[0])
         else:
-            task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0])
+            # We need to know at which position the task should be inserted as an upstream task
+            depth = 1
+            last_task = None
+            current_task = task.upstream_tasks[0]
+            while depth > 0 and not current_task.is_beginning_task:
+                if len(current_task.upstream_tasks) > 1:
+                    depth += 1
+                last_task = current_task
+                current_task = current_task.upstream_tasks[0]
+                if len(current_task.downstream_tasks) > 1:
+                    depth -= 1
+            if last_task is None:
+                task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0])
+            else:
+                task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0], current_task.downstream_tasks.index(last_task))
+
             task.remove_upstream_task(task.upstream_tasks[0])
             task.downstream_tasks[0].remove_upstream_task(task)
         # We remove the task from the project
@@ -227,9 +242,8 @@ class Project:
         self.tasks_count -= 1
         # Then, we have to shift every task id greater than task.id by -1
         for i in range(task.id, len(self.tasks)):
-            task.id -= 1
+            self.tasks[i].id -= 1
         # And finally we fix all the indices
-        c_functions.fix_indices(self)
         self.load()
 
     def save(self):
@@ -290,10 +304,25 @@ class Project:
     def load(self):
         """
         This function is called when the project is loaded.
-        It sets the index value of each task
+        It sets some information about each task : its index, its earliest and latest start,
+        and whether the task is critical or not
         :return: None
         """
         c_functions.fix_indices(self)
         c_functions.compute_earliest_start(self)
         c_functions.compute_latest_start(self)
         c_functions.identify_critical_tasks(self)
+        self.update_status()
+
+    def update_status(self):
+        """
+        Update the status of each Task. If at least one upstream_task has a status not set to TaskStatus.FINISHED,
+        then the task has the status TaskStatus.LOCKED.
+        If every one of them is finished, then we set the status to be at least TaskStatus.NOT_STARTED
+        :return: None
+        """
+        for task in self.tasks:
+            if sum(t.status == TaskStatus.FINISHED for t in task.upstream_tasks) != len(task.upstream_tasks):
+                task.status = TaskStatus.LOCKED
+            elif task.status == TaskStatus.LOCKED:
+                task.status = TaskStatus.NOT_STARTED
