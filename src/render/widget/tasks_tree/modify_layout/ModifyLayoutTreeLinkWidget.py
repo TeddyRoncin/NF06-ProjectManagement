@@ -83,11 +83,7 @@ class ModifyLayoutTreeLinkWidget(TreeLinkWidget):
 
     def get_bb(self):
         super().get_bb()
-        #if not self.dragging:
         return self.actual_bb
-        #self.actual_bb.normalize()
-        #print(self.actual_bb)
-        #return self.actual_bb
 
     def get_distance_from_line(self, pos):
         start, end = self.get_positions_coords()

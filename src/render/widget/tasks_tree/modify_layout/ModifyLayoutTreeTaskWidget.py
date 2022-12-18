@@ -22,7 +22,6 @@ class ModifyLayoutTreeTaskWidget(TreeTaskWidget):
         return
         radius = self.actual_bb.width / 2
         center = self.actual_bb.x + radius, self.actual_bb.y + radius
-        print("clicking ! ", pos, center, radius)
         if (pos[0] - radius) ** 2 + (pos[1] - radius) ** 2 <= radius ** 2:
             self.is_dragging = True
             self.on_drag()

@@ -18,7 +18,7 @@ class Project:
     - file : The name of the file in which the project is stored
     - description : A description of the project
     - tasks_count : The number of tasks of the project
-    - project_task : The task representing the end of the project. This task should be present on EVERY projects
+    - project_task : The task representing the end of the project. This task should be present on EVERY project
     - beginning_task : The task representing the start of the project. This task should be present on EVERY projects
     """
 
@@ -83,7 +83,7 @@ class Project:
     @staticmethod
     def delete_project(project):
         """
-        Deletes a project. The deletion is permanent, because the file is also deleted.
+        Deletes a project. The deletion is permanent, because the file is also deleted
         :param project: The project to delete
         :return: None
         """
@@ -181,9 +181,10 @@ class Project:
 
     def add_task(self, name, description, estimated_time, upstream_tasks, create_new_branch):
         """
-        Adds a new task to the project.
+        Adds a new task to the project
         :param name: The name of the task
         :param description: The description of the task
+        :param estimated_time: The estimated time needed to complete the task
         :param upstream_tasks: The upstream tasks of this task
         :param create_new_branch: Whether to create the task on a new branch
         :return: None
@@ -194,7 +195,7 @@ class Project:
 
     def remove_task(self, task):
         """
-        Removes a task from the project.
+        Removes a task from the project
         :param task: The task to remove
         :return: None
         """
@@ -236,9 +237,11 @@ class Project:
         """
         project_data = {"name": self.name,
                         "description": self.description,
-                        "tasks": [
-                            {"name": "", "description": "", "status": 0, "estimated_time": 0, "upstream": []} for _ in range(self.tasks_count)
-                        ]}
+                        "tasks": [{"name": "",
+                                   "description": "",
+                                   "status": 0,
+                                   "estimated_time": 0,
+                                   "upstream": []} for _ in range(self.tasks_count)]}
         self.add_tasks_to_data(project_data, self.project_task)
         with open("data/projects/" + self.file, "w") as file:
             json.dump(project_data, file)
@@ -269,7 +272,8 @@ class Project:
             if project_data["tasks"][task.id]["name"] == "":
                 self.add_tasks_to_data(project_data, task)
 
-    def load_task_to_data(self, project_data, task):
+    @staticmethod
+    def load_task_to_data(project_data, task):
         """
         Loads a single task to the JSON data (excluding the upstream field)
         :param project_data: The dictionary representing the JSON root object
