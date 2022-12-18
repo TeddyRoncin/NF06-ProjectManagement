@@ -10,6 +10,8 @@ class Window:
 
     def __init__(self):
         self.window = pygame.display.set_mode(flags=pygame.RESIZABLE)
+        pygame.display.set_caption("Project Manager")
+        pygame.display.set_icon(pygame.image.load("assets/icon.png"))
         self.screen = None
         self.mouse_left_at = (0, 0)
         self.scale_factor = 0
