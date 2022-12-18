@@ -37,7 +37,7 @@ class Project:
         non_loadable_projects = []
         for project_file_name in os.listdir("data/projects"):
             try:
-                print(f"Loading {project_file_name}")
+                print(f"Loading {project_file_name}... ", end="")
                 with open("data/projects/" + project_file_name, "r") as file:
                     project_data = json.load(file)
                     tasks = [Task(i) for i in range(len(project_data["tasks"]))]
@@ -51,7 +51,6 @@ class Project:
                         # https://stackoverflow.com/questions/5543490/json-naming-convention-snake-case-camelcase-or-pascalcase#answer-25368854
                         tasks[i].estimated_time = task["estimated_time"]
                         for upstream_task in task["upstream"]:
-                            print(f"\tLinking {tasks[i].id} and {upstream_task}")
                             tasks[i].add_upstream_task(tasks[upstream_task])
                     # The first task of the list is the beginning task, and the second one is the project task
                     projects.append(Project(project_data["name"],
@@ -60,8 +59,11 @@ class Project:
                                             tasks))
             except Exception as e:
                 non_loadable_projects.append(project_file_name)
-                print("An exception occurred while loading the project", file=sys.stderr)
+                print("Failed")
+                print(f"An exception occurred while loading the project {project_file_name}", file=sys.stderr)
                 print(e, file=sys.stderr)
+            else:
+                print("Done")
         Project.projects = projects
         Project.non_loadable_projects = non_loadable_projects
         return projects, non_loadable_projects
