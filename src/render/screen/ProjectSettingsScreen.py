@@ -9,7 +9,32 @@ from render.widget.LabelWidget import LabelWidget
 
 class ProjectSettingsScreen(Screen):
 
+    """
+    This is the Screen displayed to edit the settings of a Project.
+
+    These are the fields that of a ProjectSettingsScreen :
+    - project : The Project to edit.
+    - last_screen : The Screen to go back to when the user confirms or cancels the operation.
+    - title_label : The LabelWidget displaying the title of the Screen.
+    - name_label : The LabelWidget indicating the purpose of the following EntryWidget.
+    - name_entry : The EntryWidget used to edit the name of the Project.
+                   By default, it is filled with the name of the Project.
+    - name_warning_label : The LabelWidget used to display a warning if the name is invalid.
+    - description_label : The LabelWidget indicating the purpose of the following EntryWidget.
+    - description_entry : The EntryWidget used to edit the description of the Project.
+                          By default, it is filled with the description of the Project.
+    - description_warning_label : The LabelWidget used to display a warning if the description is invalid.
+    - save_button : The ButtonWidget used to save the changes.
+    - cancel_button : The ButtonWidget used to cancel the changes.
+    - delete_button : The ButtonWithConfirmationWidget used to delete the Project.
+    """
+
     def __init__(self, project, last_screen):
+        """
+        Create a new ProjectSettingsScreen
+        :param project: The Project to edit
+        :param last_screen: The Screen to go back to when the user confirms or cancels the modifications
+        """
         self.project = project
         self.last_screen = last_screen
         self.title_label = LabelWidget((0, 100), "Paramètres du projet", font_size=50, color=(0, 0, 0), bold=True)
@@ -25,6 +50,10 @@ class ProjectSettingsScreen(Screen):
         self.delete_button = ButtonWithConfirmationWidget((655, 860), (610, 100), "Supprimer", self.on_delete, font_size=30, bold=True)
 
     def get_widgets(self):
+        """
+        Returns the list of Widgets we should be displaying on the Window.
+        :return: A generator returning the Widgets that should be displayed.
+        """
         yield self.title_label
         yield self.name_label
         yield self.name_entry
@@ -37,6 +66,12 @@ class ProjectSettingsScreen(Screen):
         yield self.delete_button
 
     def on_save(self):
+        """
+        Callback from self.save_button. It saves the changes made to the Project.
+        Note that it may not do it if the name or the description are invalid
+        If changes are made, it redirects the user to the last screen
+        :return: None
+        """
         is_valid = True
         if self.name_entry.get_content() == "":
             self.name_warning_label.set_text("Le nom ne peut pas être vide")
@@ -55,6 +90,10 @@ class ProjectSettingsScreen(Screen):
         Window.instance.set_screen(self.last_screen)
 
     def on_delete(self):
+        """
+        Callback from self.delete_button. It deletes the Project and redirects the user to the HomeScreen
+        :return: None
+        """
         # We need to import it here to avoid circular imports
         from HomeScreen import HomeScreen
         Project.delete_project(self.project)

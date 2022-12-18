@@ -20,7 +20,7 @@ class TaskInformationWidget(Widget):
                                                                  "Prochain statut : (Vide)",
                                                                  self.update_status,
                                                                  font_size=20)
-        self.delete_button = ButtonWithConfirmationWidget((self.bb.x + 1590, self.bb.y + 100), (300, 80), "Supprimer", lambda: on_delete_task(self.task), font_size=30)
+        self.delete_button = ButtonWithConfirmationWidget((self.bb.x + 1590, self.bb.y + 100), (300, 80), "Supprimer", on_delete_task, font_size=30)
 
     def get_children(self):
         if self.task is not None and self.can_change_status:

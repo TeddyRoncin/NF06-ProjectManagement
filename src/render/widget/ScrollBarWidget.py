@@ -151,6 +151,3 @@ class ScrollBarWidget(Widget):
         if can_scroll and \
                 self.is_in_relative_bb(self.get_relative_pos(pygame.mouse.get_pos(), bb=parent_bb), bb=parent_bb):
             self.scroll = min(self.scroll + self.mouse_scroll_amount / ((1 - self.ratio) * self.get_total_size()), 1)
-
-
-__all__ = ["ScrollBarWidget"]

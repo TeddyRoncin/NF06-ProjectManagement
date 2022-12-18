@@ -206,11 +206,8 @@ class Project:
         elif len(task.upstream_tasks) > 1:
             upstream_tasks = list(task.upstream_tasks)
             for upstream_task in upstream_tasks:
-                print(upstream_task)
-                print(upstream_task.downstream_tasks)
                 task.remove_upstream_task(upstream_task)
                 task.downstream_tasks[0].add_upstream_task(upstream_task)
-                print(upstream_task.downstream_tasks)
             task.downstream_tasks[0].remove_upstream_task(task)
         elif len(task.downstream_tasks) > 1:
             downstream_tasks = list(task.downstream_tasks)

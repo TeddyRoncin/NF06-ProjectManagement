@@ -31,7 +31,3 @@ class Screen:
         :return: None
         """
         pass
-
-
-__all__ = [Screen]
-

@@ -235,6 +235,3 @@ class Widget:
         :return: None
         """
         pass
-
-
-__all__ = [Widget]

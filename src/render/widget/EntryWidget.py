@@ -123,6 +123,3 @@ class EntryWidget(Widget):
     def set_content(self, content):
         self.content = content.split("\n")
         self.cursor_position = [0, 0]
-
-
-__all__ = [EntryWidget]

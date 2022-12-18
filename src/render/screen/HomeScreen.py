@@ -20,13 +20,11 @@ class HomeScreen(Screen):
     - project_list : The ListWidget of all the projects that were loaded
     """
 
-    def __init__(self, projects=None):
+    def __init__(self):
         """
         Creates a new HomeScreen
         """
-        if projects is None:
-            projects = Project.projects
-        self.projects = projects
+        self.projects = Project.projects
         self.label = LabelWidget((0, 30), "Liste des projets", font_size=30, bold=True, color=(0, 0, 0))
         self.label.bb.left = (1920 - self.label.bb.width) / 2
         self.project_list = ProjectListWidget(pygame.Rect(460, 100, 1000, 700),
@@ -53,17 +51,21 @@ class HomeScreen(Screen):
         self.projects = projects
         self.project_list.set_projects(projects)
 
-    def on_select_project(self, project):
+    @staticmethod
+    def on_select_project(project):
         """
         Callback from self.project_list. It is called when the user clicks on a project
-        :param project_name: The name of the project that was clicked
+        It redirects the user to the ProjectScreen of the clicked Project
+        :param project: The Project that was clicked
         :return: None
         """
         Window.instance.set_screen(ProjectScreen(project))
 
-    def on_create_project(self):
+    @staticmethod
+    def on_create_project():
         """
         Callback from self.create_project_button. It is called when the user wants to create a new project.
+        It redirects the user to the CreateProjectScreen
         :return: None
         """
         Window.instance.set_screen(CreateProjectScreen())

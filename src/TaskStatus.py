@@ -22,6 +22,3 @@ class TaskStatus(IntEnum):
 
     def next_status(self):
         return TaskStatus(self.value + 1)
-
-
-__all__ = [TaskStatus]

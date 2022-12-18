@@ -1,4 +1,3 @@
-from Task import Task
 from render.Window import Window
 from render.screen.Screen import Screen
 from render.widget.ButtonWidget import ButtonWidget
@@ -6,12 +5,41 @@ from render.widget.CheckboxWidget import CheckboxWidget
 from render.widget.EntryWidget import EntryWidget
 from render.widget.LabelWidget import LabelWidget
 from render.widget.tasks_tree.add_task.AddTaskTreeWidget import AddTaskTreeWidget
-from utils import c_functions
 
 
 class AddTaskScreen(Screen):
 
+    """
+    This is the screen that is displayed when user wants to add a new task to the current project.
+
+    These are the fields of an AddTaskScreen :
+    - project : The project to which the task will be added.
+    - new_branch_checkbox : A CheckboxWidget that allows the user to choose if the task will be added on a new branch.
+    - tree_widget : An instance of a special TreeWidget that allows the user to select the upstream tasks of the Task.
+    - go_back_button : A ButtonWidget that allows the user to go back to the previous screen.
+    - name_label : A LabelWidget that indicates the purpose of the following EntryWidget.
+    - name_widget : An EntryWidget that allows the user to enter the name of the Task.
+    - name_error_widget : A LabelWidget that shows an error to the user if the name of the Task is not valid.
+    - description_label : A LabelWidget that indicates the purpose of the following EntryWidget.
+    - description_widget : An EntryWidget that allows the user to enter the description of the Task.
+    - duration_label : A LabelWidget that indicates the purpose of the following EntryWidget.
+    - duration_widget : An EntryWidget that allows the user to enter the estimated duration of the Task.
+    - duration_error_widget : A LabelWidget that shows an error to the user if the estimated duration of the Task
+                              is not valid.
+    - add_task_button : A ButtonWidget that allows the user to add the Task to the project.
+    - upstream_tasks_error : A LabelWidget that shows an error to the user if user has not selected at least
+                             one upstream Task.
+    - last_screen : The Screen that was displayed before this one.
+                    This is used to go back to the previous screen when user either cancels or confirms the operation.
+    """
+
     def __init__(self, project, last_screen):
+        """
+        Creates a new AddTaskScreen
+        :param project: The project to which the task will be added
+        :param last_screen: The screen that was displayed before this one,
+                            and that will be displayed when user cancels or confirms the operation
+        """
         self.project = project
         self.new_branch_checkbox = CheckboxWidget((1500, 750), "Créer sur une nouvelle branche ?")
         self.new_branch_checkbox.enabled = False
@@ -30,6 +58,10 @@ class AddTaskScreen(Screen):
         self.last_screen = last_screen
 
     def get_widgets(self):
+        """
+        Returns the list of widgets we should be displaying on this frame.
+        :return: A generator returning the widgets that should be displayed.
+        """
         yield self.tree_widget
         yield self.go_back_button
         yield self.name_label
@@ -45,6 +77,12 @@ class AddTaskScreen(Screen):
         yield self.upstream_tasks_error
 
     def on_add_task(self):
+        """
+        Callback from self.create_project_button. It is called when the user confirms the creation of the task.
+        It may not create it if the name or the duration are not valid.
+        If the task is created, it goes back to the previous screen.
+        :return: None
+        """
         is_valid = True
         if self.name_widget.get_content() == "":
             self.name_error_widget.set_text("Le nom de la tâche ne peut pas être vide")
@@ -75,5 +113,10 @@ class AddTaskScreen(Screen):
         Window.instance.set_screen(self.last_screen)
 
     def go_back(self):
+        """
+        Callback from self.go_back_button. It is called when the user cancels the creation of the task.
+        It goes back to the previous screen.
+        :return:
+        """
         Window.instance.set_screen(self.last_screen)
 
