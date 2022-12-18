@@ -95,7 +95,7 @@
     {
       "name": "test1",
       "description": "",
-      "status": 1,
+      "status": 0,
       "estimated_time": 0,
       "upstream": [
         8
@@ -104,7 +104,7 @@
     {
       "name": "test2",
       "description": "",
-      "status": 1,
+      "status": 0,
       "estimated_time": 0,
       "upstream": [
         10,
@@ -114,7 +114,7 @@
     {
       "name": "test_cool",
       "description": "",
-      "status": 1,
+      "status": 0,
       "estimated_time": 0,
       "upstream": [
         9
