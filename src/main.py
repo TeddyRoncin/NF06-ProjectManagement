@@ -1,19 +1,14 @@
+"""
+The entry point of the application. It initializes everything and contains the main loop.
+"""
+
 from Project import Project
 from render.screen.HomeScreen import HomeScreen
 from render.Window import Window
 
-
-class Main:
-
-    def __init__(self):
-        self.projects, non_loadable = Project.load_projects()
-        self.window = Window.instance
-        self.window.set_screen(HomeScreen())
-
-    def run(self):
-        while True:
-            self.window.tick()
-
-
 if __name__ == '__main__':
-    Main().run()
+    Project.load_projects()
+    window = Window.instance
+    window.set_screen(HomeScreen())
+    while True:
+        window.tick()

@@ -1,0 +1,30 @@
+This files defines some terms used in the project.
+
+- DEPTH : When going through the tree, we gain a unit of depth when we are entering an intersection, and lose one when
+          we are leaving it.
+
+- BEGINNING TASK : The first task of the project. It cannot be removed. It cannot really be viewed as a task in the
+                   usual sense. It is used to represent when the project starts.
+
+- PROJECT TASK : The last task of the project. It cannot be removed. It represents the task that requires the project to
+                 be over.
+
+- UPSTREAM TASK : It represents a task that needs to be entirely completed before the other task can begin. In the
+                  larger definition, it is a task that needs to be completed before the other task can begin, but there
+                  may be other tasks between the two. For example, if we have a task B that needs to be completed before
+                  a task C, and a task A that needs to be completed before task B, then task task C accepts task B as an
+                  upstream task, but also accepts task A in the larger definition.
+
+- DOWNSTREAM TASK : Same definition as upstream task, but reversed. It is a task that can only begin after the other
+                    task is completed.
+
+- LINE : A line is a list of Tasks that are all connected to each other, without any branching of other tasks. The tasks
+         are all dependent to the previous, and no other one.
+
+- BRANCH : A branch is a list of Tasks that are at least at the same level of depth as the first task of the branch.
+
+- INTERSECTION : A set of branches where the first task of each branch share the same upstream task, and the last task
+                 of each branch share the same downstream task.
+
+- BOUNDING BOX : A rectangle (represented using the class pygame.Rect) representing an area. It is mostly used to
+                 represent where to draw a widget on the screen.

@@ -5,7 +5,30 @@ from render.widget.Widget import Widget
 
 class ProjectItemWidget(Widget):
 
+    """
+    Represents a Project in the ProjectListWidget. The Project is represented by a rectangle containing its name
+    and its description. Both of them are wrapped to fit the width of the ProjectItemWidget.
+
+    These are the fields of a ProjectItemWidget :
+    - project : The Project that is represented by this ProjectItemWidget.
+    - parent_bb : The bounding box of the parent widget.
+    - get_scroll : A function that returns by how many pixels the parent widget is scrolled.
+    - bb : The bounding box of this ProjectItemWidget.
+    - actual_bb : The actual bounding box of this ProjectItemWidget, taking into account the scroll
+                  of the parent widget. This is where the Widget will be rendered.
+    - crop_amount : The amount of pixels that are cropped from the top of the Widget.
+    - render : The Surface containing the render of this ProjectItemWidget.
+               This is computed before rendering to avoid computing it at every frame.
+    """
+
     def __init__(self, project, width, parent_bb, get_scroll):
+        """
+        Creates a new ProjectItemWidget
+        :param project: The Project that is represented by this ProjectItemWidget
+        :param width: The width of the ProjectItemWidget
+        :param parent_bb: The bounding box of the parent Widget
+        :param get_scroll: A function that returns by how many pixels the parent widget is scrolled
+        """
         super().__init__()
         self.project = project
         self.parent_bb = parent_bb
@@ -47,13 +70,27 @@ class ProjectItemWidget(Widget):
         pygame.draw.rect(self.render, 0x000000, pygame.Rect((0, 0), self.bb.size), 1)
 
     def draw(self, surface):
+        """
+        Draws the ProjectItemWidget on the given Surface
+        :param surface: The Surface on which the ProjectItemWidget will be drawn
+        :return: None
+        """
         surface.blit(self.render, (0, -self.crop_amount))
 
     def get_bb(self):
+        """
+        Returns the bounding box of this ProjectItemWidget. It also refreshes the actual_bb and crop_amount fields
+        :return: The bounding box of this ProjectItemWidget
+        """
         self.actual_bb = self.bb.move(0, -self.get_scroll())
         self.crop_amount = max(0, self.parent_bb.y - self.actual_bb.y)
         self.actual_bb = self.actual_bb.clip(self.parent_bb)
         return self.actual_bb
 
     def set_position(self, pos):
+        """
+        Sets the position of this ProjectItemWidget
+        :param pos: The new position of this ProjectItemWidget
+        :return: None
+        """
         self.bb.topleft = pos
