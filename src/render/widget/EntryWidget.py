@@ -69,7 +69,7 @@ class EntryWidget(Widget):
 
     def _generate_cursor_animation(self):
         """
-        This is an internal function. It should not be used outside of this class
+        This is an internal function. It should not be used outside this class
 
         Generates the Animation of the cursor_animation field. The only effect it contains is an AppearEffect.
         :return: The generated Animation
@@ -146,7 +146,7 @@ class EntryWidget(Widget):
         - If the key is a left or right arrow key, and it is possible to perform this action,
           the cursor is moved in the corresponding direction. If needed, it is sent to the previous or next line.
         - If the key is not any of the above, the unicode value of the key is added to the EntryWidget's content
-          if we did not already reach the maximum number of characters.
+          if we did not already reach the maximum number of characters
         :param event: The event that was triggered
         :return: None
         """
@@ -201,7 +201,7 @@ class EntryWidget(Widget):
 
     def set_content(self, content):
         """
-        Modifies the content of the EntryWidget. The cursor is moved back to the very beginning of the EntryWidget.
+        Modifies the content of the EntryWidget. The cursor is moved back to the very beginning of the EntryWidget
         :param content: The new content
         :return: None
         """

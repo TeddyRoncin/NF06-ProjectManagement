@@ -10,6 +10,33 @@ else:
 
 class Task_Struct(Structure):
 
+    """
+    Represents a Task as a C struct. This is used to pass data to the C functions via ctypes.
+
+    These are the fields of the class:
+    - _tasks : A list of all the Task_Structs representing a Project. This is used to keep track of the Task_Structs
+               that have been created. The Task_Structs are in the right order, so that the id of the Task_Structs
+               match the position in the list.
+
+    These are the fields of a Task_Struct :
+    - _task : The Task this structure represents.
+    - _downstream_tasks_id : The ids of the downstream Tasks.
+    - _upstream_tasks_id : The ids of the upstream Tasks.
+    - name : The name of the Task.
+    - successors : A list of pointers of Task_Struct representing the downstream Task_Structs
+                  (in the form of a double pointer of Task_Struct).
+    - ancestors : A list of pointers of Task_Struct representing the upstream Task_Structs
+                 (in the form of a double pointer of Task_Struct).
+    - id : The id of the Task.
+    - successors_count : The length of the array of downstream Tasks.
+    - ancestors_count : The length of the array of upstream Tasks.
+    - index : The index of the Task.
+    - duration : The estimated duration of the Task.
+    - earlier : The earliest possible start of the Task (In day. The first Task starts at day 0).
+    - later : The latest possible start of the Task (In day. The first Task starts at day 0).
+    - is_critical : Whether the Task is critical.
+    """
+
     _tasks = []
 
     @staticmethod
@@ -36,6 +63,11 @@ class Task_Struct(Structure):
 
     @staticmethod
     def get_converted_task(task):
+        """
+        Get the Task_Struct corresponding to a specific Task
+        :param task: The Task to get the Task_Struct of
+        :return: The Task_Struct corresponding to the given Task
+        """
         return Task_Struct._tasks[task.id]
 
     def __init__(self, task):
@@ -156,12 +188,15 @@ _fill_indices.restype = None
 
 _task_earlier = dll.task_earlier
 _task_earlier.argtypes = [POINTER(Task_Struct)]
+_task_earlier.restype = None
 
 _task_later = dll.task_later
 _task_later.argtypes = [POINTER(Task_Struct)]
+_task_later.restype = None
 
 _identify_critical = dll.identify_critical
 _identify_critical.argtypes = [POINTER(Task_Struct)]
+_identify_critical.restype = None
 
 
 def fix_indices(project):
