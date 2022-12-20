@@ -37,6 +37,7 @@ gcc -o Core.so -shared -fPIC src/Core.c
 pyinstaller src/main.py
 cp Core.so dist/main/Core.so
 mkdir dist/main/data
+cp -r assets dist/main/assets
 ```
 
 #### Windows
@@ -46,6 +47,7 @@ gcc -o Core.dll -shared -fPIC src/Core.c
 pyinstaller src/main.py
 copy Core.dll dist\main\Core.dll
 mkdir dist\main\data
+copy -r assets dist/main
 ```
 
 Your executable should now be in `dist/main/`
