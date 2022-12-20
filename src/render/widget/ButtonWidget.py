@@ -13,6 +13,7 @@ class ButtonWidget(Widget):
     - on_click : A callback function that is called when the user presses the button.
     - text : The text displayed on the button.
     - font : The font used to render the text.
+    - font_size : The font size.
     - surface : The surface containing the rendered text.
                 We use this field to avoid to recreate it at each frame, as this surface is static.
     """
@@ -32,6 +33,7 @@ class ButtonWidget(Widget):
         self.bb = pygame.Rect(pos, size)
         self.text = text
         self.font = pygame.font.SysFont("Arial", font_size, bold=bold)
+        self.font_size = font_size
         self.surface = self.font.render(text, True, (255, 255, 255))
 
     def draw(self, surface):
@@ -66,7 +68,7 @@ class ButtonWidget(Widget):
         if text is not None:
             self.text = text
         if font_size is None:
-            font_size = self.font.get_height()
+            font_size = self.font_size
         if bold is None:
             bold = self.font.get_bold()
         self.font = pygame.font.SysFont("Arial", font_size, bold=bold)
