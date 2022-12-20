@@ -1,0 +1,1 @@
+{"name": "test", "description": "coucou", "tasks": [{"name": "test", "description": "", "status": 1, "estimated_time": 0, "upstream": []}, {"name": "test", "description": "", "status": 0, "estimated_time": 0, "upstream": [2]}, {"name": "test", "description": "coucou", "status": 0, "estimated_time": 12, "upstream": [0]}]}

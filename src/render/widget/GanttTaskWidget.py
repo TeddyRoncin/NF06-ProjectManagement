@@ -81,8 +81,7 @@ class GanttTaskWidget(Widget):
                              self.color,
                              pygame.Rect(100 + start / self.total_time * self.timeline_size[0],
                                          3 - self.amount_cropped,
-                                         (end - start
-                                          + self.task.estimated_time) / self.total_time * self.timeline_size[0],
+                                         (end - start) / self.total_time * self.timeline_size[0],
                                          self.timeline_size[1]))
 
     def get_bb(self):

@@ -116,7 +116,7 @@ class AddTaskScreen(Screen):
         """
         Callback from self.go_back_button. It is called when the user cancels the creation of the task.
         It goes back to the previous screen.
-        :return:
+        :return: None
         """
         Window.instance.set_screen(self.last_screen)
 

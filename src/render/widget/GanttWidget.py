@@ -73,7 +73,9 @@ class GanttWidget(Widget):
         :return: None
         """
         self.task_widgets.clear()
+        self.total_time = self.project.project_task.earliest_start + self.project.project_task.estimated_time
         self.generate_widgets(self.project.beginning_task)
+        self.number_of_time_marks = (self.project.tasks_count // 5) % 5 + 5
 
     def generate_widgets(self, first_task):
         """
