@@ -3,7 +3,7 @@ import sys
 from ctypes import CDLL, POINTER, c_int, Structure, c_char_p, cast, pointer, byref
 
 if sys.platform == "win32":
-    dll = CDLL("Core.dll")
+    dll = CDLL(f"{os.path.abspath(os.curdir)}Core.dll")
 elif sys.platform == "linux":
     dll = CDLL(f"{os.path.abspath(os.curdir)}/Core.so")
 elif sys.platform == "darwin":
