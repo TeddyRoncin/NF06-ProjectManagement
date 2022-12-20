@@ -58,11 +58,16 @@ class ProjectScreen(Screen):
                                                (1920, 980),
                                                project,
                                                self.task_information_widget.set_task)
-        self.add_task_widget = ButtonWidget((710, 200), (500, 100), "Ajouter une tâche", self.on_add_widget, font_size=30, bold=True)
-        self.modify_layout_widget = ButtonWidget((710, 310), (500, 100), "Modifier la disposition", self.modify_layout, font_size=30, bold=True)
-        self.project_settings_widget = ButtonWidget((710, 420), (500, 100), "Paramètres du projet", self.go_to_settings, font_size=30, bold=True)
-        self.save_project_widget = ButtonWidget((710, 530), (500, 100), "Sauvegarder le projet", self.project.save, font_size=30, bold=True)
-        self.go_back_widget = ButtonWidget((710, 640), (500, 100), "Fermer le projet", self.on_close_project, font_size=30, bold=True)
+        self.add_task_widget = ButtonWidget((710, 200), (500, 100), "Ajouter une tâche", self.on_add_widget,
+                                            font_size=30, bold=True)
+        self.modify_layout_widget = ButtonWidget((710, 310), (500, 100), "Modifier la disposition", self.modify_layout,
+                                                 font_size=30, bold=True)
+        self.project_settings_widget = ButtonWidget((710, 420), (500, 100), "Paramètres du projet", self.go_to_settings,
+                                                    font_size=30, bold=True)
+        self.save_project_widget = ButtonWidget((710, 530), (500, 100), "Sauvegarder le projet", self.project.save,
+                                                font_size=30, bold=True)
+        self.go_back_widget = ButtonWidget((710, 640), (500, 100), "Fermer le projet", self.on_close_project,
+                                           font_size=30, bold=True)
         self.earliest_gantt_widget = GanttWidget(pygame.Rect(0, 100, 1920, 980), project, True)
         self.latest_gantt_widget = GanttWidget(pygame.Rect(0, 100, 1920, 980), project, False)
 

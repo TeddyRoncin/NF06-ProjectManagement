@@ -43,11 +43,14 @@ class ProjectSettingsScreen(Screen):
         self.name_entry = EntryWidget((655, 250), (200, 30), (200, 30), 100, False, default_content=self.project.name)
         self.name_warning_label = LabelWidget((655, 285), "", color=(255, 0, 0), font_size=20)
         self.description_label = LabelWidget((655, 340), "Description :", color=(0, 0, 0), font_size=24)
-        self.description_entry = EntryWidget((655, 380), (600, 300), (600, 300), -1, True, default_content=self.project.description)
+        self.description_entry = EntryWidget((655, 380), (600, 300), (600, 300), -1, True,
+                                             default_content=self.project.description)
         self.description_warning_label = LabelWidget((655, 685), "", color=(255, 0, 0), font_size=20)
         self.save_button = ButtonWidget((655, 750), (300, 100), "Sauvegarder", self.on_save, font_size=30, bold=True)
-        self.cancel_button = ButtonWidget((965, 750), (300, 100), "Annuler", lambda: Window.instance.set_screen(self.last_screen), font_size=30, bold=True)
-        self.delete_button = ButtonWithConfirmationWidget((655, 860), (610, 100), "Supprimer", self.on_delete, font_size=30, bold=True)
+        self.cancel_button = ButtonWidget((965, 750), (300, 100), "Annuler",
+                                          lambda: Window.instance.set_screen(self.last_screen), font_size=30, bold=True)
+        self.delete_button = ButtonWithConfirmationWidget((655, 860), (610, 100), "Supprimer", self.on_delete,
+                                                          font_size=30, bold=True)
 
     def get_widgets(self):
         """

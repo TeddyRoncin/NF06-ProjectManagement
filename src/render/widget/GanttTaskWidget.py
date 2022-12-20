@@ -41,7 +41,7 @@ class GanttTaskWidget(Widget):
         :param task: The Task that is represented by this Widget
         :param is_earliest_graph: Whether the time represented is the earliest or the latest possible
         :param total_time: The total time (in day) of the Project
-        :param parent_bb: The bounding box of the parent Widget.
+        :param parent_bb: The bounding box of the parent Widget
         :param get_y_offset: A function that returns the number of pixels scrolled
         """
         super().__init__()

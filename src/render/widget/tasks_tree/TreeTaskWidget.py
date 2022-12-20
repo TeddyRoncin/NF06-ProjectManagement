@@ -1,5 +1,3 @@
-from math import sqrt, copysign
-
 import pygame
 
 from render.widget.Widget import Widget
@@ -62,7 +60,7 @@ class TreeTaskWidget(Widget):
         """
         offset = [0, 0]
         parent_bb = self.get_parent_bb()
-        #radius = self.get_scale()[0] * 20
+        # radius = self.get_scale()[0] * 20
         radius = 50
         if self.actual_bb.x == parent_bb.x:
             offset[0] = -radius*2 + self.actual_bb.width
@@ -85,13 +83,13 @@ class TreeTaskWidget(Widget):
         :return: The Rect the widget should be drawn at, in absolute coordinates
         """
         # TODO : implement zooming
-        scale_factor, scale_center = self.get_scale()
+        # scale_factor, scale_center = self.get_scale()
         self.actual_bb = self.bb.copy()
-        #self.actual_bb.width = self.actual_bb.height = scale_factor * 40
+        # self.actual_bb.width = self.actual_bb.height = scale_factor * 40
         position_offset = self.get_position_offset()
         parent_bb = self.get_parent_bb()
-        #self.actual_bb.centerx = (self.actual_bb.centerx - scale_center[0]) * scale_factor + parent_bb.centerx
-        #self.actual_bb.centery = (self.actual_bb.centery - scale_center[1]) * scale_factor + parent_bb.centery
+        # self.actual_bb.centerx = (self.actual_bb.centerx - scale_center[0]) * scale_factor + parent_bb.centerx
+        # self.actual_bb.centery = (self.actual_bb.centery - scale_center[1]) * scale_factor + parent_bb.centery
         self.actual_bb = self.actual_bb.move(position_offset)
         self.actual_bb = self.actual_bb.clip(parent_bb)
         return self.actual_bb

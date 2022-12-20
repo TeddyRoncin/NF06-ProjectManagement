@@ -233,7 +233,8 @@ class Project:
             if last_task is None:
                 task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0])
             else:
-                task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0], current_task.downstream_tasks.index(last_task))
+                task.downstream_tasks[0].add_upstream_task(task.upstream_tasks[0],
+                                                           current_task.downstream_tasks.index(last_task))
 
             task.remove_upstream_task(task.upstream_tasks[0])
             task.downstream_tasks[0].remove_upstream_task(task)

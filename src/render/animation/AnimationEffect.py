@@ -9,7 +9,7 @@ class AnimationEffect:
     It can, for example, change its transparency over time, make it translate, ...
     These are the fields of an AnimationEffect :
     - timing_function : A mathematical function used to control the speed of the animation over time.
-                        It should be defined between 0 and 1, and the outputed values represent how much
+                        It should be defined between 0 and 1, and the output values represent how much
                         the effect is applied
                         For example, it permits having a fast animation at the beginning, then slow it,
                         and speed it at the end.

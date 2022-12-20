@@ -1,5 +1,3 @@
-import pygame
-
 from render.widget.tasks_tree.TreeTaskWidget import TreeTaskWidget
 
 
