@@ -9,7 +9,7 @@ elif sys.platform == "linux":
 elif sys.platform == "darwin":
     dll = CDLL(f"{os.path.abspath(os.curdir)}/Core.dylib")
 else:
-    print("Platform not recognized")
+    print("Platform not recognized", file=sys.stderr)
     sys.exit(0)
 
 
