@@ -153,6 +153,3 @@ class ProjectScreen(Screen):
         """
         from render.screen.HomeScreen import HomeScreen
         Window.instance.set_screen(HomeScreen())
-
-
-

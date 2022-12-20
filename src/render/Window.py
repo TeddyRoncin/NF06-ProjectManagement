@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 
 from utils.decorators import singleton
@@ -109,7 +111,7 @@ class Window:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit(0)
+                sys.exit(0)
             if event.type == pygame.VIDEORESIZE:
                 self._compute_scale_info()
             if event.type == pygame.WINDOWLEAVE:

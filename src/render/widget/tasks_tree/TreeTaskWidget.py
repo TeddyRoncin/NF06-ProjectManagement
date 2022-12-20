@@ -93,4 +93,3 @@ class TreeTaskWidget(Widget):
         self.actual_bb = self.actual_bb.move(position_offset)
         self.actual_bb = self.actual_bb.clip(parent_bb)
         return self.actual_bb
-

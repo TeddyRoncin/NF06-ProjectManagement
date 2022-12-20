@@ -82,17 +82,17 @@ void add_successor(Tasks* taskAnc, Tasks* taskSucc) {
 
 // function to calculate early-Start to each task
 void task_earlier(Tasks* task) {
-    task->earlier = 0
-        for (int i = 0; i < task->ancestorCount; i++) {
-            //  we calculate the earliest start of the task by adding the duration of the predecessors to the earliest start of the predecessors
-            if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
-            task->earlier = task->ancestors[i]->earlier + task->ancestors[i]->duration;
-            }
+    task->earlier = 0;
+    for (int i = 0; i < task->ancestorCount; i++) {
+        //  we calculate the earliest start of the task by adding the duration of the predecessors to the earliest start of the predecessors
+        if (task->earlier < task->ancestors[i]->earlier + task->ancestors[i]->duration) {
+        task->earlier = task->ancestors[i]->earlier + task->ancestors[i]->duration;
         }
-        // we call the function recursively for the successors
-        for (int i = 0; i < task->successorCount; i++) {
-            task_earlier(task->successors[i]);
-        }
+    }
+    // we call the function recursively for the successors
+    for (int i = 0; i < task->successorCount; i++) {
+        task_earlier(task->successors[i]);
+    }
         
 }
 

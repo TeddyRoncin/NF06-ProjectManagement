@@ -2,10 +2,15 @@ import os
 import sys
 from ctypes import CDLL, POINTER, c_int, Structure, c_char_p, cast, pointer, byref
 
-if os.name == "windows":
+if sys.platform == "win32":
     dll = CDLL("Core.dll")
-else:
+elif sys.platform == "linux":
     dll = CDLL(f"{os.path.abspath(os.curdir)}/Core.so")
+elif sys.platform == "darwin":
+    dll = CDLL(f"{os.path.abspath(os.curdir)}/Core.dylib")
+else:
+    print("Platform not recognized")
+    sys.exit(0)
 
 
 class Task_Struct(Structure):
