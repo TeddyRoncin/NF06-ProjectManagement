@@ -36,7 +36,7 @@ Depending on your operating system, execute the appropriate commands. You may ne
 gcc -o Core.so -shared -fPIC src/Core.c
 pyinstaller src/main.py
 cp Core.so dist/main/Core.so
-mkdir dist/main/data
+mkdir dist/main/data/projects
 cp -r assets dist/main/assets
 ```
 
@@ -46,7 +46,7 @@ cp -r assets dist/main/assets
 gcc -o Core.dll -shared -fPIC src/Core.c
 pyinstaller src/main.py
 copy Core.dll dist\main\Core.dll
-mkdir dist\main\data
+mkdir dist\main\data\projects
 copy -r assets dist/main
 ```
 
