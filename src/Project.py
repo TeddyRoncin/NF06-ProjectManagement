@@ -179,7 +179,8 @@ class Project:
         self.tasks.append(task)
         self.tasks_count += 1
         # And finally we fix all the indices
-        c_functions.fix_indices(self)
+        #c_functions.fix_indices(self)
+        self.load()
 
     def add_task(self, name, description, estimated_time, upstream_tasks, create_new_branch):
         """
@@ -193,7 +194,7 @@ class Project:
         """
         task = Task(name=name, description=description, estimated_time=estimated_time, id_=self.tasks_count)
         self.add_existing_task(task, upstream_tasks, create_new_branch)
-        self.load()
+        #self.load()
 
     def remove_task(self, task):
         """

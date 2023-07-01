@@ -48,7 +48,7 @@ void fill_indice(Tasks *firstTask,Tasks *lastTask, int *firstTaskIndex, int* las
     firstTask->index = *firstTaskIndex;
     (*firstTaskIndex)++;
     // we check if the first task is the same as the last task
-    while (firstTask->successorCount == 1 && lastTask->id != firstTask->id) 
+    while (firstTask->successorCount == 1 && lastTask->id != firstTask->id)
     {
         firstTask = firstTask->successors[0];
         firstTask->index = *firstTaskIndex;
@@ -93,7 +93,7 @@ void task_earlier(Tasks* task) {
     for (int i = 0; i < task->successorCount; i++) {
         task_earlier(task->successors[i]);
     }
-        
+
 }
 
 // function to calculate late-Start to each task
@@ -102,7 +102,7 @@ void task_later(Tasks* task) {
     if (task->successorCount == 0) {
         task->later = task->earlier;
     }
-    // we calculate the latest start of the task by subtracting the duration of the task to the earliest start of the successors 
+    // we calculate the latest start of the task by subtracting the duration of the task to the earliest start of the successors
     else {
         task->later = task->successors[0]->later - task->duration;
         // we check if the latest start of the task is greater than the latest start of the successors
@@ -121,9 +121,7 @@ void task_later(Tasks* task) {
 // function to identify critical tasks
 void identify_critical(Tasks* task) {
     // we check if the earliest start of the task is equal to the latest start of the task
-    if (task->earlier == task->later) {
-        task->isCritical = true;
-    }
+    task->isCritical = task->earlier == task->later;
     // we call the function recursively for the successors
     for (int i = 0; i < task->successorCount; i++) {
         identify_critical(task->successors[i]);

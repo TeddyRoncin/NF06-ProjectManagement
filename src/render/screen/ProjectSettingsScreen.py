@@ -98,6 +98,6 @@ class ProjectSettingsScreen(Screen):
         :return: None
         """
         # We need to import it here to avoid circular imports
-        from HomeScreen import HomeScreen
+        from render.screen.HomeScreen import HomeScreen
         Project.delete_project(self.project)
         Window.instance.set_screen(HomeScreen())

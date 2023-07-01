@@ -97,6 +97,7 @@ class ProjectScreen(Screen):
         Reloads the Screen. It reloads the TreeWidget and the GanttWidgets
         :return: None
         """
+        self.project.load()
         self.tree_widget.reload()
         self.earliest_gantt_widget.reload()
         self.latest_gantt_widget.reload()

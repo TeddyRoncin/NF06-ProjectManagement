@@ -58,7 +58,7 @@ class Task:
         self.latest_start = 0
         self.is_beginning_task = self.id == 0
         self.is_project_task = self.id == 1
-        self.is_critical = True
+        self.is_critical = False
         # This task counts as a depth level, so max_downstream_tasks_depth (resp. upstream_task_count)
         # should always be at least 1
         self.max_downstream_tasks_depth = 1

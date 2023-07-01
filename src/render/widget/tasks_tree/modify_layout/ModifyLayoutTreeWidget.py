@@ -93,6 +93,9 @@ class ModifyLayoutTreeWidget(TreeWidget):
         # We can't move a link if the new downstream task is after an intersection
         if len(downstream_task.upstream_tasks) > 1:
             return
+        # We can't move a link if the new downstream task is the first task of a branch
+        if len(downstream_task.upstream_tasks[0].downstream_tasks) > 1:
+            return
         # We now need to verify that both tasks are on the same branch and at the same depth
         # For that, we just go upstream from the old downstream tasks into the tree,
         # and try to find the new downstream task

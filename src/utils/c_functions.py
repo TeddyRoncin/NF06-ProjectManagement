@@ -182,7 +182,6 @@ Task_Struct._fields_ = [
     ('duration', c_int),
     ('earlier', c_int),
     ('later', c_int),
-    ('marge', c_int),
     ('is_critical', c_int),
 ]
 
